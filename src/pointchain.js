@@ -11,7 +11,7 @@ function chainPoint (parentPoint, childPoint, distance) {
     childPoint.p = parentPoint;
     childPoint.pd = distance;
     if(!parentPoint.p) {
-        parentPoint._r = ()=>renderChain(parentPoint);
+        parentPoint._r = ()=> renderChain(parentPoint);
     }
     return childPoint;
 }
@@ -38,12 +38,15 @@ function fixChainDistances(point) {
 
 
 function renderChain(head) {
+    saveContext(ctx);
+    translateContext(ctx, head.x, head.y);
     let currentpoint = head;
     while(currentpoint.c) {
         beginPath(ctx);
         strokeStyle(ctx,'#fff');
-        circle(ctx, currentpoint.x, currentpoint.y, currentpoint.r);
+        circle(ctx, currentpoint.x-head.x, currentpoint.y-head.y, currentpoint.r);
         stroke(ctx);
         currentpoint = currentpoint.c;
     }
+    restoreContext(ctx);
 }

@@ -1,5 +1,5 @@
-# Power Down
-![](https://github.com/DerBenniBanni/robopower_gamedevjs2024/blob/main/powerdown_title.jpg)
+# The Triskaideka are here!
 
-## Gamejam Entry for Gamedev.js Jam 2024 - Theme: Power
+
+## Gamejam Entry for js13kgames Jam 2024 - Theme: Triskaidekaphobia
 When you look at the code, please keep in mind, that this game was written to take the 13kB challenge. So the sourcecode might be not as clean as expected ;-)

@@ -25,10 +25,12 @@ const paths = {
         js: [
             'src/basic_stuff.js',
             'src/inputgamepad.js',
+            'src/camera.js',
             'src/point.js',
             'src/pointchain.js',
             'src/player.js',
             'src/particle.js',
+            'src/snake.js',
             'src/game.js',
             'src/game_start.js',
         ]

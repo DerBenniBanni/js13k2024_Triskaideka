@@ -8,10 +8,13 @@ function createPlayer(x,y,rotationAngle) {
         // current speed
         dx:0,
         dy:0,
-        _r:()=>{}
+        // camera target
+        t:{x,y}
     };
     player._r = ()=>renderPlayer(player);
     player._u = (delta)=>updatePlayer(player, STICK_LEFT_HORIZONTAL, STICK_LEFT_VERTICAL, delta);
+    player.t.p = player;
+    camera.t = player.t;
     return player;
 }
 
@@ -27,7 +30,15 @@ function renderPlayer(player) {
     lineTo(ctx, 0, 10);
     stroke(ctx);
 
-
+    restoreContext(ctx);
+    /*
+    saveContext(ctx);
+    translateContext(ctx, player.t.x, player.t.y);
+    beginPath(ctx);
+    strokeStyle(ctx,COLOR_WHITE);
+    circle(ctx,0,0,3);
+    stroke(ctx);
+*/
     restoreContext(ctx);
 
 }
@@ -45,8 +56,14 @@ function updatePlayer(player, stick_horizontal, stick_vertical, delta) {
     }
     player.x += player.dx;
     player.y += player.dy;
+    let v = createStandardVector(player.a);
     if(getGamepadButtonPressed(GAMEPAD_A)) {
-        let v = createStandardVector(player.a);
         gameObjects.push(createParticleLaser(player.x, player.y, v.x * 1200, v.y * 1200, 2));
     }
+    if(getGamepadButtonPressed(GAMEPAD_B)) {
+        camera.et = 0.25;
+    }
+    let t = sumVectors(player, multiplyVector(v, 100));
+    player.t.x = t.x;
+    player.t.y = t.y;
 }

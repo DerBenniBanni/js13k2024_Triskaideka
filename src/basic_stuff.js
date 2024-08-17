@@ -46,7 +46,10 @@ function getDelta() {
 }
 
 // canvas-specific method-shortcuts for better minification of the code
-const translateContext = (context, x, y) => context.translate(x,y);
+const translateContext = (context, x, y) => {
+    let  [tx,ty] = getCameraView({x,y});
+    context.translate(tx,ty);
+}
 const rotateContext = (context, angleDegrees) => context.rotate(toRad(angleDegrees));
 const saveContext = (context) => context.save();
 const restoreContext = (context) => context.restore();
