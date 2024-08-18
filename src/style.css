@@ -15,6 +15,26 @@ canvas {
 	left: 0;
 	object-fit: contain;
 }
+#bg {
+	width:100vw;
+	height:100vh;
+	display:block;
+	position: absolute;
+	top: 0;
+	left: 0;
+	overflow:hidden;
+}
+#bg > div {
+	position:relative;
+	width:100vw;
+	height:1000vh;
+	background-color: #000;
+	top:-900vh;
+}
+
+.bg1 {
+	background: linear-gradient(0deg, #07a 0%, #118 30%, #314 61%, #002 100%);
+}
 .hidden {
 	visibility:hidden;
 }

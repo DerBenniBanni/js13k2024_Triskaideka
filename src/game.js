@@ -22,6 +22,14 @@ function update() {
     
     player._u(delta);
     camera._u(delta);
+
+    let maxBgTop = BASEHEIGHT * 9; // the world is 9 screens tall
+    let camheight = camera.y - BASEHEIGHT / 2;
+    let topPosition = (clamp(maxBgTop + camheight, 0, maxBgTop) / maxBgTop) * -900;
+    //console.log(topPosition + "vh");
+    bgGradientDiv.style.top = topPosition + "vh";
+
+
     gameObjects.forEach(gameObject => {
         if(gameObject._u) {
             gameObject._u(delta);

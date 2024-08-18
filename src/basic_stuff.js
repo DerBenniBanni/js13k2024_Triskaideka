@@ -34,7 +34,8 @@ const initCanvas = (id) => {
     return [canvasElement,canvasElement.getContext("2d")];
 }
 const [canvas, ctx] =  initCanvas('gameCanvas');
-const [bgCanvas, bgCtx] =  initCanvas('bgCanvas');
+const bgGradientDiv = document.querySelector('#bg > div');
+//const [bgCanvas, bgCtx] =  initCanvas('bgCanvas');
 
 // delta-time for updates
 let lastUpdate = Date.now();
