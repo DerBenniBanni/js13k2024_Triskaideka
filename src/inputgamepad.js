@@ -36,11 +36,14 @@ function getGamepadState() {
         });
     }
 }
-
-function getGamepadStickVector(xIndex, yIndex) {
+function getGamepadStickValue(index) {
     if(gamepadConnected()) {
-        return createPoint(inputGamepadAxes[xIndex], inputGamepadAxes[yIndex]);
+        return inputGamepadAxes[index];
     }
+    return 0;
+}
+function getGamepadStickVector(xIndex, yIndex) {
+    return createPoint(getGamepadStickValue(xIndex), getGamepadStickValue(yIndex));
 }
 
 function getGamepadButtonPressed(index) {

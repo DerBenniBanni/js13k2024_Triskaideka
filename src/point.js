@@ -82,6 +82,11 @@ function createStandardVector(angleDegrees) {
     return {x:cos(a), y:sin(a)};
 }
 
+function getStandardVector(vector) {
+    let length = vectorLength(vector);
+    return multiplyVector(vector, 1/length);
+}
+
 function sumVectors(v1, v2) {
     return {
         x:v1.x + v2.x,
