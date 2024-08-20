@@ -10,7 +10,7 @@ function chainPoint (parentPoint, childPoint, distance) {
     parentPoint.d = distance;
     childPoint.p = parentPoint;
     childPoint.pd = distance;
-    if(!parentPoint.p) {
+    if(!parentPoint.p && !parentPoint._r) {
         parentPoint._r = ()=> renderChain(parentPoint);
     }
     return childPoint;
@@ -28,6 +28,10 @@ function fixChainDistances(point) {
         let dist = vectorLength(distanceVector);
         if(abs(dist - point.d) > 0.5) {
             let v2 = multiplyVector(distanceVector, point.d / dist);
+            child.a = getVectorAngleDegrees(v2);
+            if(!point.p) {
+                point.a = child.a;
+            }
             let newchildPos = addPoints(point, v2)
             child.x = newchildPos.x;
             child.y = newchildPos.y;

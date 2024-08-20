@@ -58,7 +58,9 @@ function update() {
             if(pointDistance(laser, snake) <= snake.r) {
                 laser.ttl = -1
                 snake.hp -= 1;
-                addGameObject(createParticleDebris(laser.x, laser.y));
+                for(let i = 0; i < rand(3,7); i++) {
+                    addGameObject(createParticleDebris(laser.x, laser.y));
+                }
                 if(snake.hp == 0) {
                     snake.ttl = -1;
                 }

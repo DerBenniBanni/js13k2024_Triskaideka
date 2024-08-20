@@ -42,3 +42,7 @@ function getCameraView(point) {
         point.y - camera.y + BASEHEIGHT/2 + camera.ey
     ];
 }
+
+function cameraShake(duration) {
+    camera.et = duration;
+}

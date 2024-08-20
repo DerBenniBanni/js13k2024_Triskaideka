@@ -2,6 +2,7 @@ function createParticle(x, y, dx, dy, ttl, renderMethod, updateMethod) {
     let particle = {x,y,dx,dy,ttl};
     particle.ittl = ttl; // initial ttl
     particle.s = 1; // splashcount
+    particle.sf = 1; // splashforce multiplier
     if(renderMethod) {
         particle._r = () => {
             saveContext(ctx);
@@ -30,7 +31,7 @@ function updateParticleHitGround(particle, delta, withSplash) {
         particle.ttl = -1;
         if(withSplash) {
             for(let i = 0; i < particle.s; i++) {
-                addGameObject(createParticleSplash(particle.x, particle.y));
+                addGameObject(createParticleSplash(particle.x, particle.y, particle.sf));
             }
         }
     }
@@ -40,15 +41,22 @@ function updateParticleHitGroundSplash(particle, delta) {
     updateParticleHitGround(particle, delta, true);
 }
 
+function updateParticleSplash(particle, delta) {
+    particle.w += particle.dw * delta;
+    updateParticleHitGround(particle, delta, false);
+}
+
 function createParticleExhaust(x, y, dx, dy, ttl) {
     let particle = createParticle(x, y, dx, dy, ttl, renderParticleExhaust, updateParticleHitGroundSplash);
     particle.r = 10;
+    particle.sf = 0.5;
     return particle;
 }
 
-function createParticleSplash(x, y) {
-    let particle = createParticle(x, y, rand(-30,30), rand(-300,-250), 2, renderParticleSplash, updateParticleHitGround);
-    particle.r = 5;
+function createParticleSplash(x, y, force = 1) {
+    let particle = createParticle(x, y, rand(-30,30), rand(-300,-250) * force, 2, renderParticleSplash, updateParticleSplash);
+    particle.w = 1;
+    particle.dw = 40; // horizontal size change rate (pixel per second)
     particle.g = 500;
     return particle;
 }
@@ -89,7 +97,7 @@ function renderParticleSplash(particle) {
     beginPath(ctx);
     fillStyle(ctx, '#fff6');
     //circle(ctx, 0, 0, particle.r * (particle.ttl/ particle.ittl));
-    fillRect(ctx, -particle.r/2, 0, particle.r, GROUND_HEIGHT - particle.y);
+    fillRect(ctx, -particle.w/2, 0, particle.w, GROUND_HEIGHT - particle.y);
     stroke(ctx);
 }
 
