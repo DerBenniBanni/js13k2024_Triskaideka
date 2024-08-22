@@ -37,17 +37,9 @@ function renderPlayer(player) {
     stroke(ctx);
 
     restoreContext(ctx);
-    /*
-    saveContext(ctx);
-    translateContext(ctx, player.t.x, player.t.y);
-    beginPath(ctx);
-    strokeStyle(ctx,COLOR_WHITE);
-    circle(ctx,0,0,3);
-    stroke(ctx);
-*/
-    restoreContext(ctx);
 
 }
+
 
 const PLAYER_MODE_DIRECTIONAL = 1;
 const PLAYER_MODE_ROTATIONAL = 2;
@@ -66,12 +58,21 @@ function updatePlayer(player, stick_horizontal, stick_vertical, delta) {
         }
     } else if(playerMode == PLAYER_MODE_ROTATIONAL) {
         let stickHorizontal = getGamepadStickValue(STICK_LEFT_HORIZONTAL);
+        if(keyActive(KEY_ACTION_LEFT)) {
+            stickHorizontal = -1;
+        }
+        if(keyActive(KEY_ACTION_RIGHT)) {
+            stickHorizontal = 1;
+        }
         if(abs(stickHorizontal) > 0.1) {
             player.a += stickHorizontal * delta * player.as;
         }
         let stickVertical = getGamepadStickValue(STICK_LEFT_VERTICAL);
+        if(keyActive(KEY_ACTION_UP)) {
+            stickVertical = -1;
+        }
         if(stickVertical < -0.1) {
-            let thrustDirectionVector = createStandardVector(player.a);
+            let thrustDirectionVector = createAngleVector(player.a);
             let thrust = multiplyVector(thrustDirectionVector, -stickVertical * 7 * delta);
             player.dx += thrust.x;
             player.dy += thrust.y;
@@ -84,7 +85,7 @@ function updatePlayer(player, stick_horizontal, stick_vertical, delta) {
     if(player.dy < 5) {
         player.dy += 1 * delta;
     }
-    console.log(player.dy);
+    
     player.x += player.dx;
     player.y += player.dy;
     // Ground collision
@@ -96,10 +97,10 @@ function updatePlayer(player, stick_horizontal, stick_vertical, delta) {
         player.dy = 0;
         player.a = 270;
     }
-    let v = createStandardVector(player.a);
+    let v = createAngleVector(player.a);
     // fire triggered?
     player.lf += delta;
-    if(getGamepadButtonPressed(GAMEPAD_A) && player.lf >= player.fr) {
+    if((getGamepadButtonPressed(GAMEPAD_A) || keyActive(KEY_ACTION_FIRE)) && player.lf >= player.fr) {
         gameObjects.push(createParticleLaser(player.x, player.y, v.x * 1200, v.y * 1200, 2));
         player.lf= 0;
     }

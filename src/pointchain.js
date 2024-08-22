@@ -21,7 +21,7 @@ function chainPoint (parentPoint, childPoint, distance) {
  * fix the distances between the chain points (rekursive parent to child)
  * @param {Point} point the partenpoint to start with 
  */
-function fixChainDistances(point) {
+function fixChainDistances(point, maxAngle = 180) {
     if(point.c) {
         let child = point.c;
         let distanceVector = pointDifferenceVector(point, child);
@@ -29,15 +29,42 @@ function fixChainDistances(point) {
         if(abs(dist - point.d) > 0.5) {
             let v2 = multiplyVector(distanceVector, point.d / dist);
             child.a = getVectorAngleDegrees(v2);
-            if(!point.p) {
-                point.a = child.a;
-            }
+
             let newchildPos = addPoints(point, v2)
             child.x = newchildPos.x;
             child.y = newchildPos.y;
         }
         fixChainDistances(child);
     }
+    /* TODO: max Angle for bends 
+     
+    if(point.c) {
+        let child = point.c;
+        let distanceVector = pointDifferenceVector(point, child);
+        let dist = vectorLength(distanceVector);
+        if(abs(dist - point.d) > 0.5) {
+            let v2 = multiplyVector(distanceVector, point.d / dist);
+            let angle = getVectorAngleDegrees(v2); //clamp(getVectorAngleDegrees(v2), -maxAngle-point.a, maxAngle-point.a);
+            let angleDifference = point.a - angle;
+
+            console.log(point.a, angle, angleDifference);
+            if(abs(angleDifference) > maxAngle) {
+                angle += Math.sign(angleDifference) * (abs(angleDifference) - maxAngle);;
+            }
+            child.a = angle;
+            if(!point.p) {
+                //point.a = child.a;
+            }
+            let v3 = createAngleVector(angle, point.d);
+            console.log(point, v3)
+            let newchildPos = addPoints(point, v3);
+            child.x = newchildPos.x;
+            child.y = newchildPos.y;
+        }
+        fixChainDistances(child, maxAngle);
+    } 
+     
+    */
 }
 
 

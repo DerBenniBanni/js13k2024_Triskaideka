@@ -25,16 +25,46 @@ function createSnakeSegment(x, y, radius) {
     return segment;
 }
 
-
 function updateSnake(head, delta, speed) {
     let targetPoint = createPoint(player.x, player.y);
-    targetPoint.x += sin(toRad(gameTime*head.tSpin)) * head.r*1.5;
-    targetPoint.y += cos(toRad(gameTime*head.tSpin)) * head.r*1.5;
-    let targetVector = getStandardVector(pointDifferenceVector(head, targetPoint));
-    head.x += targetVector.x * speed * delta;
-    head.y += targetVector.y * speed * delta;
-    fixChainDistances(head);
+    
+    //targetPoint.x += sin(toRad(gameTime*head.tSpin)) * head.r*.5;
+    //targetPoint.y += cos(toRad(gameTime*head.tSpin)) * head.r*.5;
+    
+    let targetVector = pointDifferenceVector(head, targetPoint)
+    let targetAngle = getVectorAngleDegrees(targetVector) + 720;
+    if(head.i) {
+        let headAngle = head.a +180+360
+        let diffAngle = targetAngle - headAngle;
+        if(diffAngle < -180) {
+            diffAngle += 180;
+        }
+        console.log(targetAngle, headAngle, diffAngle);
+        let turnspeed = speed; // angel per second
+        let maxTurn = turnspeed * delta;
+        if(diffAngle < 0 && diffAngle > 180) {
+            head.a -= maxTurn;
+        } else if(diffAngle > 0 || diffAngle < -180) {
+            head.a += maxTurn;
+        }
+    } else {
+        head.a = targetAngle+180;
+        head.i = true;
+    }
+    // normalize angle
+    if(head.a > 360) {
+        head.a -= 360;
+    }
+    if(head.a < 0) {
+        head.a += 360;
+    }
+
+    let targetStandardVector = createAngleVector(head.a-180, speed * delta); 
+    head.x += targetStandardVector.x;
+    head.y += targetStandardVector.y;
+    fixChainDistances(head, 90);
 }
+
 
 function renderSnake(head) {
     saveContext(ctx);
@@ -46,21 +76,23 @@ function renderSnake(head) {
     while(currentpoint.c) {
         let x = currentpoint.x-head.x;
         let y = currentpoint.y-head.y;
-        /*
+        /**/
         beginPath(ctx);
-        strokeStyle(ctx,'#fff');
+        fillStyle(ctx,'#000');
         circle(ctx, x, y, currentpoint.r);
-        stroke(ctx);
-        */
+        fill(ctx);
+        /**/
 
         // debug segment angle
         /*
-        let v = createStandardVector(currentpoint.a+180);
+        let v = createAngleVector(currentpoint.a+180);
         beginPath(ctx);
+        
+        strokeStyle(ctx,'#ff0');
         moveTo(ctx, x,y);
         lineTo(ctx, x+v.x*currentpoint.r, y + v.y*currentpoint.r);
         stroke(ctx);
-        */
+        /**/
         
         if(isHead) {
             [[180,1],[170,1.5],[160,1],[150,1.5],[140,1],[130,1.5],[120,1],[110,1.5]].forEach(d => {
@@ -94,7 +126,7 @@ function renderSnake(head) {
 
 function calculateCirclePointAtAngle(x, y, currentpoint, angle, radiusMultiplier = 1) {
     let r = currentpoint.r * radiusMultiplier; 
-    let v = createStandardVector(currentpoint.a + angle);
+    let v = createAngleVector(currentpoint.a + angle);
     return createPoint(x+v.x*r, y + v.y*r);
 }
 

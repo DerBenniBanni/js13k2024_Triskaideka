@@ -15,6 +15,7 @@ const PI = Math.PI;
 const sin = Math.sin;
 const cos = Math.cos;
 const sqrt = Math.sqrt;
+const sign = Math.sign;
 const clamp = (num, min, max) => Math.min(Math.max(num, min), max);
 const abs = (value) => Math.abs(value);
 const toRad = (deg) => deg * (PI / 180);

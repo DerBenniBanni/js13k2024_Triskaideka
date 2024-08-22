@@ -5,7 +5,7 @@
  * @returns 
  */
 function createPoint (x,y){
-    return {x,y}
+    return {x,y, a:0}
 };
 
 /**
@@ -16,7 +16,7 @@ function createPoint (x,y){
  * @returns 
  */
 function createCircle (x,y,r) {
-    return {x,y,r}
+    return {x,y,r, a:0}
 }
 
 /**
@@ -77,9 +77,13 @@ function getVectorAngleDegrees(v) {
     return toDeg(getVectorAngle(v));
 }
 
-function createStandardVector(angleDegrees) {
+function createAngleVector(angleDegrees, distance = 1) {
     let a = toRad(angleDegrees);
-    return {x:cos(a), y:sin(a)};
+    let v = {x:cos(a), y:sin(a)};
+    if(distance != 1) {
+        return multiplyVector(v, distance);
+    }
+    return v;
 }
 
 function getStandardVector(vector) {

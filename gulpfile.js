@@ -25,6 +25,7 @@ const paths = {
         js: [
             'src/basic_stuff.js',
             'src/inputgamepad.js',
+            'src/inputkeyboard.js',
             'src/camera.js',
             'src/point.js',
             'src/pointchain.js',
