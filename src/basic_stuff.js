@@ -65,3 +65,4 @@ const fill = (context) => context.fill();
 const fillRect = (context,x,y,w,h) => context.fillRect(x,y,w,h);
 
 const circle = (context, x, y, r) => context.arc(x, y, r, 0, PI*2);
+const ellipse = (context, x, y, rx, ry, rot, start, end) => context.ellipse(x, y, rx, ry, rot, start, end);

@@ -22,6 +22,9 @@ function render() {
 function renderGround() {
     saveContext(ctx);
     translateContext(ctx, camera.x-BASEWIDTH/2, GROUND_HEIGHT);
+    ctx.clearRect(0,0,BASEWIDTH, BASEHEIGHT);
+    fillStyle(ctx,'#ccf6');
+    fillRect(ctx,0,0,BASEWIDTH, BASEHEIGHT);
     let y = 0;
     [5,4,3,1].forEach(lineWidth => {
         beginPath(ctx);
@@ -63,6 +66,7 @@ function update() {
                 }
                 if(snake.hp == 0) {
                     snake.ttl = -1;
+                    explodeSnake(snake);
                 }
             }
         })

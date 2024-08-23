@@ -1,3 +1,4 @@
+const SMOKE_RATE_ONE_HP = 0.1;
 function createPlayer(x,y,rotationAngle) {
     let player = {
         // position
@@ -16,6 +17,11 @@ function createPlayer(x,y,rotationAngle) {
         fr:0.1,
         // last fire triggered (seconds)
         lf:0,
+        // hitpoints
+        h:10,
+        mh:10,
+        // last smoke particle generated (seconds)
+        ls:0
     };
     player._r = ()=>renderPlayer(player);
     player._u = (delta)=>updatePlayer(player, STICK_LEFT_HORIZONTAL, STICK_LEFT_VERTICAL, delta);
@@ -37,6 +43,7 @@ function renderPlayer(player) {
     stroke(ctx);
 
     restoreContext(ctx);
+
 
 }
 
@@ -100,12 +107,18 @@ function updatePlayer(player, stick_horizontal, stick_vertical, delta) {
     let v = createAngleVector(player.a);
     // fire triggered?
     player.lf += delta;
+    player.ls += delta;
     if((getGamepadButtonPressed(GAMEPAD_A) || keyActive(KEY_ACTION_FIRE)) && player.lf >= player.fr) {
         gameObjects.push(createParticleLaser(player.x, player.y, v.x * 1200, v.y * 1200, 2));
         player.lf= 0;
     }
     if(getGamepadButtonPressed(GAMEPAD_B)) {
         cameraShake(0.25);
+    }
+    // smoke
+    if(player.h < player.mh && SMOKE_RATE_ONE_HP * player.h < player.ls) {
+        gameObjects.push(createParticleSmoke(player.x, player.y));
+        player.ls = 0;
     }
     // set camera target position (100 pixel ahead)
     let t = sumVectors(player, multiplyVector(v, 100));

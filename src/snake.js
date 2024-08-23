@@ -34,17 +34,13 @@ function updateSnake(head, delta, speed) {
     let targetVector = pointDifferenceVector(head, targetPoint)
     let targetAngle = getVectorAngleDegrees(targetVector) + 720;
     if(head.i) {
-        let headAngle = head.a +180+360
-        let diffAngle = targetAngle - headAngle;
-        if(diffAngle < -180) {
-            diffAngle += 180;
-        }
-        console.log(targetAngle, headAngle, diffAngle);
+        let headAngle = head.a-180;
+        let diffAngle = (targetAngle - headAngle + 180) % 360 - 180;
         let turnspeed = speed; // angel per second
         let maxTurn = turnspeed * delta;
-        if(diffAngle < 0 && diffAngle > 180) {
+        if(diffAngle < 0) {
             head.a -= maxTurn;
-        } else if(diffAngle > 0 || diffAngle < -180) {
+        } else if(diffAngle > 0) {
             head.a += maxTurn;
         }
     } else {
@@ -76,7 +72,7 @@ function renderSnake(head) {
     while(currentpoint.c) {
         let x = currentpoint.x-head.x;
         let y = currentpoint.y-head.y;
-        /**/
+        /*
         beginPath(ctx);
         fillStyle(ctx,'#000');
         circle(ctx, x, y, currentpoint.r);
@@ -128,6 +124,17 @@ function calculateCirclePointAtAngle(x, y, currentpoint, angle, radiusMultiplier
     let r = currentpoint.r * radiusMultiplier; 
     let v = createAngleVector(currentpoint.a + angle);
     return createPoint(x+v.x*r, y + v.y*r);
+}
+
+function explodeSnake(head) {
+    let currentpoint = head;
+    while(currentpoint.c) {
+        gameObjects.push(createParticleSmoke(currentpoint.x + rand(-currentpoint.r,currentpoint.r), currentpoint.y + rand(-currentpoint.r,currentpoint.r),3));
+        for(let i = 0; i < rand(3,7); i++) {
+            addGameObject(createParticleDebris(currentpoint.x+rand(-currentpoint.r,currentpoint.r), currentpoint.y+rand(-currentpoint.r,currentpoint.r)));
+        }
+        currentpoint = currentpoint.c;
+    }
 }
 
 /* GAMEPAD controlled snake...?
