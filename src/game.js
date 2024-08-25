@@ -64,9 +64,11 @@ function update() {
                 for(let i = 0; i < rand(3,7); i++) {
                     addGameObject(createParticleDebris(laser.x, laser.y));
                 }
+                playAudio(AUDIO_SFX_HIT);
                 if(snake.hp == 0) {
                     snake.ttl = -1;
                     explodeSnake(snake);
+                    playAudio(AUDIO_SFX_EXPLOSION);
                 }
             }
         })

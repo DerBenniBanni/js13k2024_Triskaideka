@@ -121,6 +121,7 @@ function updatePlayer(player, stick_horizontal, stick_vertical, delta) {
     if(player.y > GROUND_HEIGHT-8) {
         if(player.dy > 0.5) {
             addGameObject(createParticleSplash(player.x, player.y, 1));
+            camera.et = 0.25;
         }
         player.y = GROUND_HEIGHT-8.1;
         player.dy = 0;
@@ -131,6 +132,7 @@ function updatePlayer(player, stick_horizontal, stick_vertical, delta) {
     player.lf += delta;
     player.ls += delta;
     if((getGamepadButtonPressed(GAMEPAD_A) || keyActive(KEY_ACTION_FIRE)) && player.lf >= player.fr) {
+        playAudio(AUDIO_SFX_LASER);
         gameObjects.push(createParticleLaser(player.x, player.y, v.x * 1200, v.y * 1200, 2));
         player.lf= 0;
     }

@@ -1,10 +1,11 @@
-    // This music has been exported by SoundBox. You can use it with
-    // http://sb.bitsnbites.eu/player-small.js in your own product.
+// This music has been exported by SoundBox. You can use it with
+// http://sb.bitsnbites.eu/player-small.js in your own product.
 
-    // See http://sb.bitsnbites.eu/demo.html for an example of how to
-    // use it in a demo.
+// See http://sb.bitsnbites.eu/demo.html for an example of how to
+// use it in a demo.
 
-    // Song data
+const AUDIO_SONG_AIRWOLF = 0;
+// Song data
   let songAirwolf = {
       songData: [
         { // Instrument 0
@@ -222,4 +223,4 @@
       numChannels: 5  // Number of channels
     };
 
-loadMusic(songAirwolf, "airwolf", true);
+loadMusic(songAirwolf, AUDIO_SONG_AIRWOLF, true);
