@@ -12,10 +12,10 @@ function getGameObjectsByType(type) {
 
 function render() {
     ctx.clearRect(0,0,BASEWIDTH, BASEHEIGHT);
-    player._r();
     gameObjects
         .filter(gameObject=>gameObject._r)
         .forEach(gameObject => gameObject._r());
+    player._r();
     renderGround();
 }
 

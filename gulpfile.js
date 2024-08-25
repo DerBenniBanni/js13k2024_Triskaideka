@@ -32,6 +32,9 @@ const paths = {
             'src/player.js',
             'src/particle.js',
             'src/snake.js',
+            'src/musicplayer.js',
+            'src/music.js',
+            'src/song_airwolf.js',
             'src/game.js',
             'src/game_start.js',
         ]

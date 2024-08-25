@@ -31,15 +31,37 @@ function createPlayer(x,y,rotationAngle) {
 }
 
 function renderPlayer(player) {
+    let tip = [0,-25];
+    let points = [
+        -2,-12,
+        -6,-11,
+        -5,-9,
+        -3,-8,
+        -4,-5,
+        -14,4, //-8,
+        -13,7, //-5,
+        -5,2,
+        -6,9,
+        -3,9,
+        -2,8
+    ];
+    let length = points.length;
     saveContext(ctx);
     translateContext(ctx, player.x, player.y);
-    rotateContext(ctx, player.a);
+    rotateContext(ctx, player.a+90);
 
     beginPath(ctx);
-    strokeStyle(ctx, COLOR_WHITE);
-    moveTo(ctx, 0, -10);
-    lineTo(ctx, 20, 0);
-    lineTo(ctx, 0, 10);
+    fillStyle(ctx, '#000');
+    strokeStyle(ctx, '#fff');
+    moveTo(ctx, tip[0], tip[1]);
+    for(let i = 0; i<length-1; i+=2) {
+        lineTo(ctx, points[i], points[i+1]);
+    }
+    for(let i = length-2; i>=0; i-=2) {
+        lineTo(ctx, -points[i], points[i+1]);
+    }
+    lineTo(ctx, tip[0], tip[1]);
+    fill(ctx);
     stroke(ctx);
 
     restoreContext(ctx);
@@ -83,7 +105,7 @@ function updatePlayer(player, stick_horizontal, stick_vertical, delta) {
             let thrust = multiplyVector(thrustDirectionVector, -stickVertical * 7 * delta);
             player.dx += thrust.x;
             player.dy += thrust.y;
-            gameObjects.push(createParticleExhaust(player.x, player.y, -thrustDirectionVector.x * 400, -thrustDirectionVector.y * 400, 1));
+            gameObjects.push(createParticleExhaust(player.x, player.y, player.dx-thrustDirectionVector.x * 400, player.dy-thrustDirectionVector.y * 400, 1));
         } else {
             player.dx *= 0.99;
         }
@@ -96,11 +118,11 @@ function updatePlayer(player, stick_horizontal, stick_vertical, delta) {
     player.x += player.dx;
     player.y += player.dy;
     // Ground collision
-    if(player.y > GROUND_HEIGHT) {
+    if(player.y > GROUND_HEIGHT-8) {
         if(player.dy > 0.5) {
             addGameObject(createParticleSplash(player.x, player.y, 1));
         }
-        player.y = GROUND_HEIGHT-1;
+        player.y = GROUND_HEIGHT-8.1;
         player.dy = 0;
         player.a = 270;
     }
