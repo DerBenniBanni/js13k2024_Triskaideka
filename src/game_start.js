@@ -24,6 +24,9 @@ for(let i = 0; i < 50; i++) {
 }
 
 
+// document.addEventListener("click", ()=>playAudio(AUDIO_SONG_AIRWOLF, false));
+
+
 
 
 

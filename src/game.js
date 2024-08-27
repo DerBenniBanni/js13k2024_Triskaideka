@@ -1,5 +1,9 @@
 const GROUND_HEIGHT = BASEHEIGHT - 50;
 
+const GAMEOBJECT_TYPE_SNAKE = 1;
+const GAMEOBJECT_TYPE_LASER = 2;
+const GAMEOBJECT_TYPE_ENEMY = 3;
+
 
 function addGameObject(gameObject) {
     gameObjects.push(gameObject);
@@ -20,22 +24,22 @@ function render() {
 }
 
 function renderGround() {
-    saveContext(ctx);
-    translateContext(ctx, camera.x-BASEWIDTH/2, GROUND_HEIGHT);
+    saveContext();
+    translateContext(camera.x-BASEWIDTH/2, GROUND_HEIGHT);
     ctx.clearRect(0,0,BASEWIDTH, BASEHEIGHT);
-    fillStyle(ctx,'#ccf6');
-    fillRect(ctx,0,0,BASEWIDTH, BASEHEIGHT);
+    fillStyle('#ccf6');
+    fillRect(0,0,BASEWIDTH, BASEHEIGHT);
     let y = 0;
     [5,4,3,1].forEach(lineWidth => {
-        beginPath(ctx);
+        beginPath();
         ctx.lineWidth = lineWidth;
-        strokeStyle(ctx, COLOR_WHITE);
-        moveTo(ctx, 0, y);
-        lineTo(ctx, BASEWIDTH, y);
-        stroke(ctx);
+        strokeStyle(COLOR_WHITE);
+        moveTo(0, y);
+        lineTo(BASEWIDTH, y);
+        stroke();
         y += lineWidth * 2;
     });
-    restoreContext(ctx);
+    restoreContext();
 }
 
 
@@ -54,10 +58,12 @@ function update() {
     bgGradientDiv.style.top = topPosition + "vh";
 
     // collisions
-    let lasers = getGameObjectsByType(TYPE_LASER);
-    let snakes = getGameObjectsByType(TYPE_SNAKE);
+    let lasers = getGameObjectsByType(GAMEOBJECT_TYPE_LASER);
+    let snakes = getGameObjectsByType(GAMEOBJECT_TYPE_SNAKE);
+    let enemies = getGameObjectsByType(GAMEOBJECT_TYPE_ENEMY);
     lasers.forEach(laser => {
         snakes.forEach(snake => {
+             //TODO: check every chain of the snake
             if(pointDistance(laser, snake) <= snake.r) {
                 laser.ttl = -1
                 snake.hp -= 1;
@@ -71,7 +77,22 @@ function update() {
                     playAudio(AUDIO_SFX_EXPLOSION);
                 }
             }
-        })
+        });
+        enemies.forEach(enemy => {
+            if(pointDistance(laser, enemy) <= enemy.r) {
+                laser.ttl = -1
+                enemy.hp -= 1;
+                for(let i = 0; i < rand(2,5); i++) {
+                    addGameObject(createParticleDebris(laser.x, laser.y));
+                }
+                playAudio(AUDIO_SFX_HIT);
+                if(enemy.hp == 0) {
+                    enemy.ttl = -1;
+                    explodeEnemy(enemy);
+                    playAudio(AUDIO_SFX_EXPLOSION);
+                }
+            }
+        });
     })
 
     gameObjects.forEach(gameObject => {

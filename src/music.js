@@ -9,11 +9,13 @@ function loadMusic(song, audioname, loop) {
     audios[audioname].src = URL.createObjectURL(new Blob([wave], {type: "audio/wav"}));
     audios[audioname].loop = loop;
 }
-function playAudio(audioname) {
+function playAudio(audioname, restart = true) {
     let audio = audios[audioname];
     if(audio) {
-        audio.currentTime = 0;
-        audio.play();
+        if(restart || audio.paused) {
+            audio.currentTime = 0;
+            audio.play();
+        }
     }
 }
 function stopAudio(audioname) {
@@ -22,4 +24,11 @@ function stopAudio(audioname) {
         audio.pause();
         audio.currentTime = 0;
     }
+}
+function isPlaying(audioname) {
+    let audio = audios[audioname];
+    if(audio) {
+        return !audio.paused;
+    }
+    return false;
 }

@@ -26,6 +26,7 @@ const paths = {
             'src/basic_stuff.js',
             'src/inputgamepad.js',
             'src/inputkeyboard.js',
+            'src/spritebuffer.js',
             'src/camera.js',
             'src/point.js',
             'src/pointchain.js',
@@ -38,6 +39,7 @@ const paths = {
             'src/sfx_laser.js',
             'src/sfx_explosion.js',
             'src/sfx_hit.js',
+            'src/sfx_engine.js',
             'src/game.js',
             'src/game_start.js',
         ]

@@ -69,15 +69,15 @@ function fixChainDistances(point, maxAngle = 180) {
 
 
 function renderChain(head) {
-    saveContext(ctx);
-    translateContext(ctx, head.x, head.y);
+    saveContext();
+    translateContext(head.x, head.y);
     let currentpoint = head;
     while(currentpoint.c) {
-        beginPath(ctx);
-        strokeStyle(ctx,'#fff');
-        circle(ctx, currentpoint.x-head.x, currentpoint.y-head.y, currentpoint.r);
-        stroke(ctx);
+        beginPath();
+        strokeStyle('#fff');
+        circle(currentpoint.x-head.x, currentpoint.y-head.y, currentpoint.r);
+        stroke();
         currentpoint = currentpoint.c;
     }
-    restoreContext(ctx);
+    restoreContext();
 }

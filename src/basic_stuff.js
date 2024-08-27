@@ -36,7 +36,8 @@ const initCanvas = (id) => {
 }
 const [canvas, ctx] =  initCanvas('gameCanvas');
 const bgGradientDiv = document.querySelector('#bg > div');
-//const [bgCanvas, bgCtx] =  initCanvas('bgCanvas');
+
+let currentCtx = ctx;
 
 // delta-time for updates
 let lastUpdate = Date.now();
@@ -48,23 +49,27 @@ function getDelta() {
 }
 
 // canvas-specific method-shortcuts for better minification of the code
-const translateContext = (context, x, y) => {
-    let  [tx,ty] = getCameraView({x,y});
-    context.translate(tx,ty);
+function setCurrentContext(context) {
+    currentCtx = context;
 }
-const rotateContext = (context, angleDegrees) => context.rotate(toRad(angleDegrees));
-const saveContext = (context) => context.save();
-const restoreContext = (context) => context.restore();
-const strokeStyle = (context, color) => context.strokeStyle = color;
-const fillStyle = (context, color) => context.fillStyle = color;
-const beginPath = (context) => context.beginPath();
-const moveTo = (context,x,y) => context.moveTo(x,y);
-const lineTo = (context,x,y) => context.lineTo(x,y);
-const stroke = (context) => context.stroke();
-const fill = (context) => context.fill();
-const fillRect = (context,x,y,w,h) => context.fillRect(x,y,w,h);
-const setFillModeDelete = (context) => context.globalCompositeOperation = "destination-out";
-const setFillModeFill = (context) => context.globalCompositeOperation = "source-over";
+function translateContext(x, y) {
+    let [tx,ty] = getCameraView({x,y});
+    currentCtx.translate(tx,ty);
+}
+const rotateContext = (angleDegrees) => currentCtx.rotate(toRad(angleDegrees));
+const saveContext = () => currentCtx.save();
+const restoreContext = () => currentCtx.restore();
+const strokeStyle = (color) => currentCtx.strokeStyle = color;
+const fillStyle = (color) => currentCtx.fillStyle = color;
+const beginPath = () => currentCtx.beginPath();
+const moveTo = (x,y) => currentCtx.moveTo(x,y);
+const lineTo = (x,y) => currentCtx.lineTo(x,y);
+const stroke = () => currentCtx.stroke();
+const fill = () => currentCtx.fill();
+const fillRect = (x,y,w,h) => currentCtx.fillRect(x,y,w,h);
+const drawImage = (source,x,y) => currentCtx.drawImage(source,x,y);
+const setFillModeDelete = () => currentCtx.globalCompositeOperation = "destination-out";
+const setFillModeFill = () => currentCtx.globalCompositeOperation = "source-over";
 
-const circle = (context, x, y, r) => context.arc(x, y, r, 0, PI*2);
-const ellipse = (context, x, y, rx, ry, rot, start, end) => context.ellipse(x, y, rx, ry, rot, start, end);
+const circle = (x, y, r) => currentCtx.arc(x, y, r, 0, PI*2);
+const ellipse = (x, y, rx, ry, rot, start, end) => currentCtx.ellipse(x, y, rx, ry, rot, start, end);

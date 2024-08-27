@@ -1,7 +1,7 @@
-const TYPE_SNAKE = 1;
+
 function createSnake(x, y, headsize, segments, speed) {
     let headPoint = createSnakeSegment(x,y, headsize);
-    headPoint.ot = TYPE_SNAKE;
+    headPoint.ot = GAMEOBJECT_TYPE_SNAKE;
     headPoint.hp = 10;
     headPoint._r = () => renderSnake(headPoint);
     // gamepad control? 
@@ -63,8 +63,8 @@ function updateSnake(head, delta, speed) {
 
 
 function renderSnake(head) {
-    saveContext(ctx);
-    translateContext(ctx, head.x, head.y);
+    saveContext();
+    translateContext(head.x, head.y);
     let pointsRight = [];
     let pointsLeft = [];
     let currentpoint = head;
@@ -73,21 +73,21 @@ function renderSnake(head) {
         let x = currentpoint.x-head.x;
         let y = currentpoint.y-head.y;
         /*
-        beginPath(ctx);
-        fillStyle(ctx,'#000');
-        circle(ctx, x, y, currentpoint.r);
-        fill(ctx);
+        beginPath();
+        fillStyle('#000');
+        circle(x, y, currentpoint.r);
+        fill();
         /**/
 
         // debug segment angle
         /*
         let v = createAngleVector(currentpoint.a+180);
-        beginPath(ctx);
+        beginPath();
         
-        strokeStyle(ctx,'#ff0');
-        moveTo(ctx, x,y);
-        lineTo(ctx, x+v.x*currentpoint.r, y + v.y*currentpoint.r);
-        stroke(ctx);
+        strokeStyle('#ff0');
+        moveTo(x,y);
+        lineTo(x+v.x*currentpoint.r, y + v.y*currentpoint.r);
+        stroke();
         /**/
         
         if(isHead) {
@@ -99,25 +99,25 @@ function renderSnake(head) {
         pointsLeft.unshift(calculateCirclePointAtAngle(x,y,currentpoint,90));
         pointsRight.push(calculateCirclePointAtAngle(x,y,currentpoint,-90))
         /*
-        beginPath(ctx);
-        circle(ctx, x+v.x*currentpoint.r, y + v.y*currentpoint.r, 3);
-        stroke(ctx);
+        beginPath();
+        circle(x+v.x*currentpoint.r, y + v.y*currentpoint.r, 3);
+        stroke();
         */
         currentpoint = currentpoint.c;
         isHead = false;
     }
-    beginPath(ctx);
-    strokeStyle(ctx,COLOR_WHITE);
+    beginPath();
+    strokeStyle(COLOR_WHITE);
     let points = [...pointsRight, ...pointsLeft];
     points.forEach((p, i) => {
         if(i == 0) {
-            moveTo(ctx, p.x, p.y);
+            moveTo(p.x, p.y);
         } else {
-            lineTo(ctx, p.x, p.y);
+            lineTo(p.x, p.y);
         }
     });
-    stroke(ctx);
-    restoreContext(ctx);
+    stroke();
+    restoreContext();
 }
 
 function calculateCirclePointAtAngle(x, y, currentpoint, angle, radiusMultiplier = 1) {

@@ -5,10 +5,10 @@ function createParticle(x, y, dx, dy, ttl, renderMethod, updateMethod) {
     particle.sf = 1; // splashforce multiplier
     if(renderMethod) {
         particle._r = () => {
-            saveContext(ctx);
-            translateContext(ctx, particle.x, particle.y);
+            saveContext();
+            translateContext(particle.x, particle.y);
             renderMethod(particle);
-            restoreContext(ctx);
+            restoreContext();
         }
     }
     updateMethod = updateMethod ? updateMethod : updateParticle;
@@ -61,11 +61,10 @@ function createParticleSplash(x, y, force = 1) {
     return particle;
 }
 
-const TYPE_LASER = 2;
 function createParticleLaser(x, y, dx, dy, ttl) {
     let particle = createParticle(x, y, dx, dy, ttl, renderParticleLaser, updateParticleHitGroundSplash);
     particle.r = 3;
-    particle.ot = TYPE_LASER;
+    particle.ot = GAMEOBJECT_TYPE_LASER;
     let l = vectorLength({x:dx, y:dy});
     particle.v = createPoint(dx/l, dy/l);
     particle.s = 5;
@@ -75,6 +74,7 @@ function createParticleLaser(x, y, dx, dy, ttl) {
 function createParticleDust(x,y) {
     let particle = createParticle(x, y, 0, 0, Infinity, renderParticleDust, updateParticleDust);
     particle.a = rand(0,360);
+    particle.l = 1;
     return particle;
 }
 
@@ -91,6 +91,8 @@ function updateParticleDust(particle) {
     if(particle.y > camera.y + BASEHEIGHT/2) {
         particle.y = camera.y - BASEHEIGHT/2;
     }
+    particle.a = player.dva;
+    particle.l = 1+player.dvl;
 }
 
 function createParticleSmoke(x,y,ttlModifier = 1) {
@@ -107,44 +109,44 @@ function createParticleDebris(x,y) {
 }
 
 function renderParticleSmoke(particle) {
-    beginPath(ctx);
+    beginPath();
     let alpha = particle.ttl/ particle.ittl;
-    fillStyle(ctx,'rgba(50,50,40,'+alpha+')');
-    circle(ctx, 0, 0, particle.r * (particle.ittl - particle.ttl/ particle.ittl));
-    fill(ctx);
+    fillStyle('rgba(50,50,40,'+alpha+')');
+    circle(0, 0, particle.r * (particle.ittl - particle.ttl/ particle.ittl));
+    fill();
 }
 
 function renderParticleExhaust(particle) {
-    beginPath(ctx);
-    fillStyle(ctx,'#fa01');
-    circle(ctx, 0, 0, particle.r * (particle.ttl/ particle.ittl));
-    fill(ctx);
+    beginPath();
+    fillStyle('#fa01');
+    circle(0, 0, particle.r * (particle.ttl/ particle.ittl));
+    fill();
 }
 
 function renderParticleSplash(particle) {
-    beginPath(ctx);
-    fillStyle(ctx, '#fff3');
-    //circle(ctx, 0, 0, particle.r * (particle.ttl/ particle.ittl));
-    //fillRect(ctx, -particle.w/2, 0, particle.w, GROUND_HEIGHT - particle.y);
+    beginPath();
+    fillStyle('#fff3');
+    //circle(0, 0, particle.r * (particle.ttl/ particle.ittl));
+    //fillRect(-particle.w/2, 0, particle.w, GROUND_HEIGHT - particle.y);
     let r = particle.r * (particle.ttl/ particle.ittl);
-    ellipse(ctx, 0, GROUND_HEIGHT - particle.y, particle.w, clamp(GROUND_HEIGHT - particle.y,0,500),0,PI,2*PI);
-    fill(ctx);
+    ellipse(0, GROUND_HEIGHT - particle.y, particle.w, clamp(GROUND_HEIGHT - particle.y,0,500),0,PI,2*PI);
+    fill();
 }
 
 function renderParticleLaser(particle) {
-    fillStyle(ctx,'#ff0a');
+    fillStyle('#ff0a');
     [0,5,10,15].forEach(offset => {
-        beginPath(ctx);
-        circle(ctx, -offset*particle.v.x, -offset*particle.v.y, particle.r);
-        fill(ctx);
+        beginPath();
+        circle(-offset*particle.v.x, -offset*particle.v.y, particle.r);
+        fill();
     });
 }
 
 function renderParticleDust(particle) {
-    rotateContext(ctx, particle.a);
-    beginPath(ctx);
-    strokeStyle(ctx,'#fffa');
-    moveTo(ctx,-2,0);
-    lineTo(ctx,2,0);
-    stroke(ctx);
+    rotateContext(particle.a);
+    beginPath();
+    strokeStyle('#fffa');
+    moveTo(-particle.l,0);
+    lineTo(particle.l,0);
+    stroke();
 }

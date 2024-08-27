@@ -11,6 +11,9 @@ function createPlayer(x,y,rotationAngle) {
         // current speed
         dx:0,
         dy:0,
+        dv:createPoint(0,0), // speed vector
+        dva:0, // speed angle
+        dvl:0, // speed length
         // camera target
         t:{x,y},
         // fire rate in time between shots
@@ -46,25 +49,25 @@ function renderPlayer(player) {
         -2,8
     ];
     let length = points.length;
-    saveContext(ctx);
-    translateContext(ctx, player.x, player.y);
-    rotateContext(ctx, player.a+90);
+    saveContext();
+    translateContext(player.x, player.y);
+    rotateContext(player.a+90);
 
-    beginPath(ctx);
-    fillStyle(ctx, '#000');
-    strokeStyle(ctx, '#fff');
-    moveTo(ctx, tip[0], tip[1]);
+    beginPath();
+    fillStyle('#000');
+    strokeStyle('#fff');
+    moveTo(tip[0], tip[1]);
     for(let i = 0; i<length-1; i+=2) {
-        lineTo(ctx, points[i], points[i+1]);
+        lineTo(points[i], points[i+1]);
     }
     for(let i = length-2; i>=0; i-=2) {
-        lineTo(ctx, -points[i], points[i+1]);
+        lineTo(-points[i], points[i+1]);
     }
-    lineTo(ctx, tip[0], tip[1]);
-    fill(ctx);
-    stroke(ctx);
+    lineTo(tip[0], tip[1]);
+    fill();
+    stroke();
 
-    restoreContext(ctx);
+    restoreContext();
 
 
 }
@@ -106,8 +109,10 @@ function updatePlayer(player, stick_horizontal, stick_vertical, delta) {
             player.dx += thrust.x;
             player.dy += thrust.y;
             gameObjects.push(createParticleExhaust(player.x, player.y, player.dx-thrustDirectionVector.x * 400, player.dy-thrustDirectionVector.y * 400, 1));
+            playAudio(AUDIO_SFX_ENGINE, false);
         } else {
             player.dx *= 0.99;
+            stopAudio(AUDIO_SFX_ENGINE);
         }
     }
 
@@ -148,4 +153,9 @@ function updatePlayer(player, stick_horizontal, stick_vertical, delta) {
     let t = sumVectors(player, multiplyVector(v, 100));
     player.t.x = t.x;
     player.t.y = t.y;
+    // update player speed vector
+    player.dv.x = player.dx;
+    player.dv.y = player.dy;
+    player.dva = getVectorAngleDegrees(player.dv);
+    player.dvl = vectorLength(player.dv);
 }
