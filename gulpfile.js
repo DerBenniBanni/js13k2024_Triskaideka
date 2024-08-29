@@ -33,6 +33,7 @@ const paths = {
             'src/player.js',
             'src/particle.js',
             'src/snake.js',
+            'src/enemy.js',
             'src/musicplayer.js',
             'src/music.js',
             'src/song_airwolf.js',
@@ -40,6 +41,8 @@ const paths = {
             'src/sfx_explosion.js',
             'src/sfx_hit.js',
             'src/sfx_engine.js',
+            'src/triskaideka.js',
+            'src/menu.js',
             'src/game.js',
             'src/game_start.js',
         ]

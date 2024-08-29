@@ -102,9 +102,10 @@ function createParticleSmoke(x,y,ttlModifier = 1) {
 }
 
 function createParticleDebris(x,y) {
-    let particle = createParticle(x, y, rand(-50,50), rand(-150,10), Infinity, renderParticleDust, updateParticleHitGroundSplash);
+    let particle = createParticle(x, y, rand(-50,50), rand(-150,10), 2, renderParticleDust, updateParticleHitGroundSplash);
     particle.a = rand(0,360);
     particle.g = 500;
+    particle.l = rand(3,6);
     return particle;
 }
 

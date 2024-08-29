@@ -2,11 +2,6 @@
 const BASEWIDTH = 1920;
 const BASEHEIGHT = 900;
 
-// Game states (not used, yet...)
-const STATE_LOADING = 1;
-const STATE_MENU = 2;
-const STATE_GAME_RUNNING = 3;
-const STATE_GAME_FINISHED = 4;
 
 const COLOR_WHITE = '#fff';
 
@@ -67,6 +62,7 @@ const lineTo = (x,y) => currentCtx.lineTo(x,y);
 const stroke = () => currentCtx.stroke();
 const fill = () => currentCtx.fill();
 const fillRect = (x,y,w,h) => currentCtx.fillRect(x,y,w,h);
+const rect = (x,y,w,h) => {beginPath(); currentCtx.rect(x,y,w,h); stroke();}
 const drawImage = (source,x,y) => currentCtx.drawImage(source,x,y);
 const setFillModeDelete = () => currentCtx.globalCompositeOperation = "destination-out";
 const setFillModeFill = () => currentCtx.globalCompositeOperation = "source-over";
