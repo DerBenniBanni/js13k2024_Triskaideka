@@ -33,7 +33,8 @@ function updateSnake(head, delta, speed) {
     
     let targetVector = pointDifferenceVector(head, targetPoint)
     let targetAngle = getVectorAngleDegrees(targetVector) + 720;
-    if(head.i) {
+    head.ta = targetAngle;
+    if(head.inited) {
         let headAngle = head.a-180;
         let diffAngle = (targetAngle - headAngle + 180) % 360 - 180;
         let turnspeed = speed; // angel per second
@@ -45,7 +46,7 @@ function updateSnake(head, delta, speed) {
         }
     } else {
         head.a = targetAngle+180;
-        head.i = true;
+        head.inited = true;
     }
     // normalize angle
     if(head.a > 360) {
@@ -69,15 +70,17 @@ function renderSnake(head) {
     let pointsLeft = [];
     let currentpoint = head;
     let isHead = true;
+    let counter = 0;
     while(currentpoint.c) {
         let x = currentpoint.x-head.x;
         let y = currentpoint.y-head.y;
-        /*
+        
+        setFillModeDelete();
         beginPath();
-        fillStyle('#000');
+        fillStyle(COLOR_BLACK);
         circle(x, y, currentpoint.r);
         fill();
-        /**/
+        setFillModeFill();
 
         // debug segment angle
         /*
@@ -91,13 +94,20 @@ function renderSnake(head) {
         /**/
         
         if(isHead) {
-            [[180,1],[170,1.5],[160,1],[150,1.5],[140,1],[130,1.5],[120,1],[110,1.5]].forEach(d => {
+            [[180,1],[170,2],[160,1],[150,1.5],[140,1],[130,1.2]].forEach(d => {
                 pointsLeft.unshift(calculateCirclePointAtAngle(x,y,currentpoint,d[0],d[1]));
                 pointsRight.push(calculateCirclePointAtAngle(x,y,currentpoint,-d[0],d[1]));
             });
         }
         pointsLeft.unshift(calculateCirclePointAtAngle(x,y,currentpoint,90));
-        pointsRight.push(calculateCirclePointAtAngle(x,y,currentpoint,-90))
+        pointsRight.push(calculateCirclePointAtAngle(x,y,currentpoint,-90));
+        if(counter % 2 == 0) {
+            [[70,1.5],[70,1]].forEach(d=>{
+                pointsLeft.unshift(calculateCirclePointAtAngle(x,y,currentpoint,d[0],d[1]));
+                pointsRight.push(calculateCirclePointAtAngle(x,y,currentpoint,-d[0],d[1]));
+            });
+
+        }
         /*
         beginPath();
         circle(x+v.x*currentpoint.r, y + v.y*currentpoint.r, 3);
@@ -105,6 +115,7 @@ function renderSnake(head) {
         */
         currentpoint = currentpoint.c;
         isHead = false;
+        counter++;
     }
     beginPath();
     strokeStyle(COLOR_WHITE);
@@ -117,8 +128,24 @@ function renderSnake(head) {
         }
     });
     stroke();
+    let eyeRadius = head.r/4;
+    let pupilRadius = eyeRadius/2;
+    let targetEyeVector = createAngleVector(head.ta, eyeRadius-pupilRadius);
+    [90,-90].forEach(a => {
+        let p = calculateCirclePointAtAngle(0,0,head,a, .7);
+        beginPath();
+        fillStyle(COLOR_WHITE);
+        circle(p.x,p.y,eyeRadius);
+        fill();
+        beginPath();
+        fillStyle(COLOR_BLACK);
+        circle(p.x+targetEyeVector.x, p.y+targetEyeVector.y,pupilRadius);
+        fill();
+    });
+    
     restoreContext();
 }
+
 
 function calculateCirclePointAtAngle(x, y, currentpoint, angle, radiusMultiplier = 1) {
     let r = currentpoint.r * radiusMultiplier; 

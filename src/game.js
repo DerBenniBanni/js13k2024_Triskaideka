@@ -88,6 +88,16 @@ function update() {
             loadGameMenu();
             return;
         }
+        enemies.forEach(enemy => {
+            let hit = pointDistance(enemy, player) <= enemy.r + player.cr;
+            if(hit && player.ct <= 0) {
+                player.h -= 1;
+                enemy.hp -= 1;
+                player.ct = 0.5;
+                cameraShake(0.25);
+                addGameObject(createParticleExplosion((enemy.x + player.x)/2, (enemy.y + player.y)/2, COLOR_RGB_YELLOW))
+            }
+        })
         lasers.forEach(laser => {
             snakes.forEach(snake => {
                 if(laser.ttl < 0) {
@@ -117,7 +127,7 @@ function update() {
                 if(pointDistance(laser, enemy) <= enemy.r) {
                     laser.ttl = -1
                     enemy.hp -= 1;
-                    for(let i = 0; i < rand(2,5); i++) {
+                    for(let i = 0; i < rand(2,4); i++) {
                         addGameObject(createParticleDebris(laser.x, laser.y));
                     }
                     playAudio(AUDIO_SFX_HIT);
@@ -162,7 +172,7 @@ function loadGameMenu() {
     camera.t = null;
     gameState = STATE_MENU;
     addGameObject(createTriskaideka(BASEWIDTH/2,70, 0.8));
-    addGameObject(createButton(BASEWIDTH/2,500,200,40,"START",loadGameAction));
+    addGameObject(createButton(BASEWIDTH/2,500,300,40,"START MISSION",loadGameAction));
 }
 let player = null;
 

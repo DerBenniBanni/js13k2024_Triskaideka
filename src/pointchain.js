@@ -74,7 +74,7 @@ function renderChain(head) {
     let currentpoint = head;
     while(currentpoint.c) {
         beginPath();
-        strokeStyle('#fff');
+        strokeStyle(COLOR_WHITE);
         circle(currentpoint.x-head.x, currentpoint.y-head.y, currentpoint.r);
         stroke();
         currentpoint = currentpoint.c;

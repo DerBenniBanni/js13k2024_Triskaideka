@@ -23,6 +23,10 @@ function createPlayer(x,y,rotationAngle) {
         // hitpoints
         h:10,
         mh:10,
+        alive:true,
+        // collision
+        cr:10, // collision circle-radius
+        ct:0, // timeout from enemy-collision
         // last smoke particle generated (seconds)
         ls:0
     };
@@ -34,6 +38,9 @@ function createPlayer(x,y,rotationAngle) {
 }
 
 function renderPlayer(player) {
+    if(!player.alive) {
+        return;
+    }
     let tip = [0,-25];
     let points = [
         -2,-12,
@@ -54,8 +61,8 @@ function renderPlayer(player) {
     rotateContext(player.a+90);
 
     beginPath();
-    fillStyle('#000');
-    strokeStyle('#fff');
+    fillStyle(COLOR_BLACK);
+    strokeStyle(COLOR_WHITE);
     moveTo(tip[0], tip[1]);
     for(let i = 0; i<length-1; i+=2) {
         lineTo(points[i], points[i+1]);
@@ -77,7 +84,11 @@ const PLAYER_MODE_DIRECTIONAL = 1;
 const PLAYER_MODE_ROTATIONAL = 2;
 let playerMode = PLAYER_MODE_ROTATIONAL;
 function updatePlayer(player, stick_horizontal, stick_vertical, delta) {
-    if(playerMode == PLAYER_MODE_DIRECTIONAL) {
+    player.ct -= delta;
+    if(player.h <= 0) {
+        player.a -= 360 * delta;
+        stopAudio(AUDIO_SFX_ENGINE);
+    } else if(playerMode == PLAYER_MODE_DIRECTIONAL) {
         let gamepadVector = getGamepadStickVector(stick_horizontal, stick_vertical);
         if(gamepadVector && vectorLength(gamepadVector) > 0.2) {
             player.a = getVectorAngleDegrees(gamepadVector);
@@ -111,7 +122,7 @@ function updatePlayer(player, stick_horizontal, stick_vertical, delta) {
             gameObjects.push(createParticleExhaust(player.x, player.y, player.dx-thrustDirectionVector.x * 400, player.dy-thrustDirectionVector.y * 400, 1));
             playAudio(AUDIO_SFX_ENGINE, false);
         } else {
-            player.dx *= 0.99;
+            player.dx *= 0.995;
             stopAudio(AUDIO_SFX_ENGINE);
         }
     }
@@ -131,6 +142,14 @@ function updatePlayer(player, stick_horizontal, stick_vertical, delta) {
         player.y = GROUND_HEIGHT-8.1;
         player.dy = 0;
         player.a = 270;
+        player.dx = 0;
+        if(player.h <= 0 && player.alive) {
+            player.alive = false;
+            addGameObject(createParticleExplosion(player.x, player.y,COLOR_RGB_YELLOW));
+            for(let i = 0; i < 40; i++) {
+                addGameObject(createParticleDebris(player.x, player.y, 3, -300));
+            }
+        }
     }
     let v = createAngleVector(player.a);
     // fire triggered?

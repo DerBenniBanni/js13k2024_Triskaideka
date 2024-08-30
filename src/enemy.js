@@ -19,6 +19,10 @@ function createEnemy(x, y, components) {
 
 function updateEnemy(delta, enemy) {
     enemy.a += rand(25,90) * delta;
+    if(enemy.hp <= 0) {
+        enemy.ttl = 0;
+        explodeEnemy(enemy);
+    }
 }
 
 function explodeEnemy(enemy) {
@@ -36,8 +40,8 @@ function createEnemyImage(enemy) {
     rotateContext(90);
     enemy.c.forEach(points => {
         beginPath();
-        fillStyle('#000');
-        strokeStyle('#fff');
+        fillStyle(COLOR_BLACK);
+        strokeStyle(COLOR_WHITE);
         moveTo(points[0], points[1]);
         let length = points.length;
         let close = true;

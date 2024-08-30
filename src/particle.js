@@ -98,11 +98,24 @@ function updateParticleDust(particle) {
 function createParticleSmoke(x,y,ttlModifier = 1) {
     let particle = createParticle(x, y, rand(-5,5), rand(-50,-15), rand(1,2) * ttlModifier, renderParticleSmoke);
     particle.r = rand(5,10);
+    particle.c = '50,50,40';
     return particle;
 }
 
-function createParticleDebris(x,y) {
-    let particle = createParticle(x, y, rand(-50,50), rand(-150,10), 2, renderParticleDust, updateParticleHitGroundSplash);
+function createParticleExplosion(x,y,rgb,ttlModifier = 1) {
+    let particle = createParticle(x, y, 0, 0, 1 * ttlModifier, renderParticleSmoke, updateParticleExplosion);
+    particle.r = rand(20,30);
+    particle.c = rgb;
+    return particle;
+}
+
+function updateParticleExplosion(particle, delta) {
+    particle.r += particle.r * 3 * delta;
+    particle.ttl -= delta;
+}
+
+function createParticleDebris(x,y, xMultiplyer = 1, yModifier = 0) {
+    let particle = createParticle(x, y, rand(-50,50) * xMultiplyer, rand(-150,10) + yModifier, 2, renderParticleDust, updateParticleHitGroundSplash);
     particle.a = rand(0,360);
     particle.g = 500;
     particle.l = rand(3,6);
@@ -112,7 +125,7 @@ function createParticleDebris(x,y) {
 function renderParticleSmoke(particle) {
     beginPath();
     let alpha = particle.ttl/ particle.ittl;
-    fillStyle('rgba(50,50,40,'+alpha+')');
+    fillStyle('rgba(' + particle.c + ','+alpha+')');
     circle(0, 0, particle.r * (particle.ittl - particle.ttl/ particle.ittl));
     fill();
 }

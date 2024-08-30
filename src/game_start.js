@@ -2,3 +2,4 @@ getDelta();
 gameLoop();
 
 loadGameMenu();
+loadGameAction();
