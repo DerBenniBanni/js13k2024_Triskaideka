@@ -26,45 +26,44 @@ function fixChainDistances(point, maxAngle = 180) {
         let child = point.c;
         let distanceVector = pointDifferenceVector(point, child);
         let dist = vectorLength(distanceVector);
-        if(abs(dist - point.d) > 0.5) {
+        //if(abs(dist - point.d) > 0.5) {
             let v2 = multiplyVector(distanceVector, point.d / dist);
             child.a = getVectorAngleDegrees(v2);
 
             let newchildPos = addPoints(point, v2)
             child.x = newchildPos.x;
             child.y = newchildPos.y;
-        }
-        fixChainDistances(child);
-    }
-    /* TODO: max Angle for bends 
-     
-    if(point.c) {
-        let child = point.c;
-        let distanceVector = pointDifferenceVector(point, child);
-        let dist = vectorLength(distanceVector);
-        if(abs(dist - point.d) > 0.5) {
-            let v2 = multiplyVector(distanceVector, point.d / dist);
-            let angle = getVectorAngleDegrees(v2); //clamp(getVectorAngleDegrees(v2), -maxAngle-point.a, maxAngle-point.a);
-            let angleDifference = point.a - angle;
 
-            console.log(point.a, angle, angleDifference);
-            if(abs(angleDifference) > maxAngle) {
-                angle += Math.sign(angleDifference) * (abs(angleDifference) - maxAngle);;
+            let diffAngle = (point.a - child.a + 180) % 360 - 180;
+            let updateNeeded = false;
+            if(diffAngle < -maxAngle) {
+                diffAngle = -maxAngle;
+                updateNeeded = true;
+            } else if(diffAngle > maxAngle) {
+                diffAngle = maxAngle;
+                updateNeeded = true;
             }
-            child.a = angle;
-            if(!point.p) {
-                //point.a = child.a;
+            if(updateNeeded) {
+                child.a = normalizeAngle(point.a + 720 - diffAngle);
+                let diffVector = createAngleVector(child.a, point.d);
+                let newchildPos = addPoints(point, diffVector);
+                child.x = newchildPos.x;
+                child.y = newchildPos.y;
             }
-            let v3 = createAngleVector(angle, point.d);
-            console.log(point, v3)
-            let newchildPos = addPoints(point, v3);
-            child.x = newchildPos.x;
-            child.y = newchildPos.y;
-        }
+                
+        //}
         fixChainDistances(child, maxAngle);
-    } 
-     
-    */
+    }
+}
+
+function normalizeAngle(angle) {
+    while(angle >= 360) {
+        angle -= 360;
+    }
+    while(angle < 0) {
+        angle += 360;
+    }
+    return angle;
 }
 
 

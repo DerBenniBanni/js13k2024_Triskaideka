@@ -4,6 +4,8 @@ const GAMEOBJECT_TYPE_SNAKE = 1;
 const GAMEOBJECT_TYPE_LASER = 2;
 const GAMEOBJECT_TYPE_ENEMY = 3;
 const GAMEOBJECT_TYPE_BUTTON = 4;
+const GAMEOBJECT_TYPE_SQUID = 5;
+const GAMEOBJECT_TYPE_TENTACLE = 5;
 
 const STATE_LOADING = 0;
 const STATE_MENU = 1;
@@ -84,7 +86,8 @@ function update() {
         let lasers = getGameObjectsByType(GAMEOBJECT_TYPE_LASER);
         let snakes = getGameObjectsByType(GAMEOBJECT_TYPE_SNAKE);
         let enemies = getGameObjectsByType(GAMEOBJECT_TYPE_ENEMY);
-        if(snakes.length + enemies.length == 0) {
+        let squids = getGameObjectsByType(GAMEOBJECT_TYPE_SQUID);
+        if(snakes.length + enemies.length + squids.length == 0) {
             loadGameMenu();
             return;
         }
@@ -181,14 +184,12 @@ function loadGameAction() {
     gameState = STATE_ACTION;
     player = createPlayer(BASEWIDTH/2,GROUND_HEIGHT-3, -90);
 
+
+    
     for(let i = 0; i < 50; i++) {
         addGameObject(createParticleDust(rand(0, BASEWIDTH),rand(0, BASEHEIGHT)));
     }
     
-    addGameObject(createSnake(400,200, 20, 13, 20));
-    addGameObject(createSnake(600,600, 15, 26, 30));
-    addGameObject(createSnake(1900,400, 30, 20, 25));
-
     [ENEMY_WING_A, ENEMY_WING_B, ENEMY_WING_C, ENEMY_WING_D, ENEMY_WING_E].forEach((wing,i) => {
         let x = 100 + i*50;
         [ENEMY_HULL_A, ENEMY_HULL_B, ENEMY_HULL_C].forEach((hull,j) => {
@@ -199,4 +200,13 @@ function loadGameAction() {
             });
         });
     });
+    
+    addGameObject(createSquid(900,200, 80));
+
+
+    addGameObject(createSnake(400,200, 20, 13, 20));
+    addGameObject(createSnake(600,600, 15, 26, 30));
+    addGameObject(createSnake(1900,400, 30, 20, 25));
+
+
 }
