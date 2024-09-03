@@ -33,6 +33,7 @@ const paths = {
             'src/player.js',
             'src/particle.js',
             'src/snake.js',
+            'src/squid.js',
             'src/enemy.js',
             'src/musicplayer.js',
             'src/music.js',

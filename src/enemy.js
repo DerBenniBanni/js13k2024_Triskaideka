@@ -2,13 +2,20 @@ function createEnemy(x, y, components) {
     let enemy = {
         x:x,
         y:y,
-        a:45,
+        dx:0,
+        dy:0,
+        a:rand(0,360),
         c:components,
         ttl:Infinity,
         ot:GAMEOBJECT_TYPE_ENEMY,
         r:15, // collission radius
-        hp:2
+        hp:2,
+        s:50, // Speed in pixel per second
+        t:{x:BASEWIDTH/2 + rand(-500, 500),y:BASEHEIGHT/2 + rand(-400, 400)},
+        ti:rand(2,5), // TargetChangeInterval in seconds
+        tc:0, //targetChangeCountdown
     };
+    enemy.tc = enemy.ti;
     
     createEnemyImage(enemy);
     enemy._r = () => renderEnemy(enemy);
@@ -18,7 +25,31 @@ function createEnemy(x, y, components) {
 }
 
 function updateEnemy(delta, enemy) {
-    enemy.a += rand(25,90) * delta;
+    enemy.tc -= delta;
+    if(enemy.tc <= 0) {
+        enemy.t = {x:player.x+rand(-200,200), y:player.y+rand(-200,200)};
+        enemy.tc = enemy.ti;
+    }
+    
+    let targetVector = pointDifferenceVector(enemy, enemy.t);
+    let targetAngle = getVectorAngleDegrees(targetVector) + 720;
+    let headAngle = enemy.a-180;
+    let diffAngle = (targetAngle - headAngle + 180) % 360 - 180;
+    let turnspeed = enemy.s; // angel per second
+    let maxTurn = turnspeed * delta;
+    if(diffAngle < 0) {
+        enemy.a -= maxTurn;
+    } else if(diffAngle > 0) {
+        enemy.a += maxTurn;
+    }
+    
+    // normalize angle
+    enemy.a = normalizeAngle(enemy.a);
+
+    let targetStandardVector = createAngleVector(enemy.a-180, enemy.s * delta); 
+    enemy.x += targetStandardVector.x;
+    enemy.y += targetStandardVector.y;
+   
     if(enemy.hp <= 0) {
         enemy.ttl = 0;
         explodeEnemy(enemy);
@@ -37,7 +68,7 @@ function createEnemyImage(enemy) {
     setCurrentContext(enemy.i.ctx);
     saveContext();
     translateContext(enemy.i.w/2, enemy.i.h/2);
-    rotateContext(90);
+    rotateContext(-90);
     enemy.c.forEach(points => {
         beginPath();
         fillStyle(COLOR_BLACK);

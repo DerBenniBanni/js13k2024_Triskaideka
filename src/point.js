@@ -86,9 +86,9 @@ function createAngleVector(angleDegrees, distance = 1) {
     return v;
 }
 
-function getStandardVector(vector) {
+function getStandardVector(vector, targetLength = 1) {
     let length = vectorLength(vector);
-    return multiplyVector(vector, 1/length);
+    return multiplyVector(vector, targetLength/length);
 }
 
 function sumVectors(v1, v2) {

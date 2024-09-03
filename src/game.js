@@ -196,7 +196,8 @@ function loadGameAction() {
             let y = 200 + j*150;
             [ENEMY_COCKPIT_A, ENEMY_COCKPIT_B, ENEMY_COCKPIT_C].forEach((cockpit, k) => {
                 let y1 = y + k*50;
-                addGameObject(createEnemy(x,y1,[wing, hull, cockpit]));
+                //addGameObject(createEnemy(x,y1,[wing, hull, cockpit]));
+                addGameObject(createEnemy(rand(-BASEWIDTH, BASEWIDTH*2), rand(-BASEHEIGHT*2,0),[wing, hull, cockpit]));
             });
         });
     });
