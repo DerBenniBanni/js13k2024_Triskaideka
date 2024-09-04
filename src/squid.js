@@ -5,7 +5,8 @@ function createSquid(x,y, size) {
         y:y, 
         s:size, 
         ot:GAMEOBJECT_TYPE_SQUID,
-        t:[]
+        t:[],
+        hp:20
     };
     squid._r = () => renderSquid(squid);
     squid._u = (delta) => updateSquid(squid, delta);
@@ -70,4 +71,13 @@ function updateSquid(squid, delta) {
         }
         t._u(delta);
     });
+       
+    if(squid.hp <= 0) {
+        squid.ttl = 0;
+        explodeSquid(squid);
+    }
+}
+
+function explodeSquid(squid) {
+
 }

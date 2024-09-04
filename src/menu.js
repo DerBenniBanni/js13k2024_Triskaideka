@@ -1,11 +1,20 @@
-function createButton(x,y,w,h,text,click) {
+function createButton(x,y,w,h,text,active,click) {
     let btn = {
         x,y,w,h,t:text,c:click,
         ot:GAMEOBJECT_TYPE_BUTTON,
-        a:true // active
+        a:active,
+        l:{} // navigationlinks (directions)
     };
     btn._r = ()=>renderButton(btn);
     return btn;
+}
+
+const DIRECTION_DOWN = 1;
+const DIRECTION_UP = -1;
+
+function linkButtons(buttonFrom, buttonTo, direction) {
+    buttonFrom.l[direction] = buttonTo;
+    buttonTo.l[-direction] = buttonFrom;
 }
 
 function renderButton(btn) {

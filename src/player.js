@@ -115,7 +115,7 @@ function updatePlayer(player, stick_horizontal, stick_vertical, delta) {
             stickVertical = -1;
         }
         if(stickVertical < -0.1) {
-            let thrustDirectionVector = createAngleVector(player.a);
+            let thrustDirectionVector = createAngleVector(player.a + rand(-10,10));
             let thrust = multiplyVector(thrustDirectionVector, -stickVertical * 7 * delta);
             player.dx += thrust.x;
             player.dy += thrust.y;
@@ -152,12 +152,16 @@ function updatePlayer(player, stick_horizontal, stick_vertical, delta) {
         }
     }
     let v = createAngleVector(player.a);
+    let v1 = createAngleVector(player.a-5);
+    let v2 = createAngleVector(player.a+5);
     // fire triggered?
     player.lf += delta;
     player.ls += delta;
-    if((getGamepadButtonPressed(GAMEPAD_A) || keyActive(KEY_ACTION_FIRE)) && player.lf >= player.fr) {
+    if((getGamepadButtonPressed(GAMEPAD_A) || keyActive(KEY_ACTION_FIRE)) && player.lf >= player.fr && player.alive) {
         playAudio(AUDIO_SFX_LASER);
         gameObjects.push(createParticleLaser(player.x, player.y, v.x * 1200, v.y * 1200, 2));
+        gameObjects.push(createParticleLaser(player.x, player.y, v1.x * 1200, v1.y * 1200, 2));
+        gameObjects.push(createParticleLaser(player.x, player.y, v2.x * 1200, v2.y * 1200, 2));
         player.lf= 0;
     }
     if(getGamepadButtonPressed(GAMEPAD_B)) {

@@ -14,8 +14,11 @@ function createEnemy(x, y, components) {
         t:{x:BASEWIDTH/2 + rand(-500, 500),y:BASEHEIGHT/2 + rand(-400, 400)},
         ti:rand(2,5), // TargetChangeInterval in seconds
         tc:0, //targetChangeCountdown
+        fi:rand(2,3), // fire interval
+        fc:0, // fire countdown
     };
     enemy.tc = enemy.ti;
+    enemy.fc = enemy.fi;
     
     createEnemyImage(enemy);
     enemy._r = () => renderEnemy(enemy);
@@ -26,6 +29,7 @@ function createEnemy(x, y, components) {
 
 function updateEnemy(delta, enemy) {
     enemy.tc -= delta;
+    enemy.fc -= delta;
     if(enemy.tc <= 0) {
         enemy.t = {x:player.x+rand(-200,200), y:player.y+rand(-200,200)};
         enemy.tc = enemy.ti;
@@ -49,6 +53,12 @@ function updateEnemy(delta, enemy) {
     let targetStandardVector = createAngleVector(enemy.a-180, enemy.s * delta); 
     enemy.x += targetStandardVector.x;
     enemy.y += targetStandardVector.y;
+
+    if(enemy.fc <= 0) {
+        enemy.fc = enemy.fi;
+        let v = createAngleVector(enemy.a);
+        addGameObject(createParticleEnemyBullet(enemy.x +v.x * -15, enemy.y +v.y * -20, v.x * -200, v.y * -200, 8));
+    }
    
     if(enemy.hp <= 0) {
         enemy.ttl = 0;

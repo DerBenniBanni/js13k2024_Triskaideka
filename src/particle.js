@@ -71,6 +71,16 @@ function createParticleLaser(x, y, dx, dy, ttl) {
     return particle;
 }
 
+function createParticleEnemyBullet(x, y, dx, dy, ttl) {
+    let particle = createParticle(x, y, dx, dy, ttl, renderParticleEnemyBullet, updateParticleHitGroundSplash);
+    particle.r = 6;
+    particle.ot = GAMEOBJECT_TYPE_ENEMY_BULLET;
+    let l = vectorLength({x:dx, y:dy});
+    particle.v = createPoint(dx/l, dy/l);
+    particle.s = 1;
+    return particle;
+}
+
 function createParticleDust(x,y) {
     let particle = createParticle(x, y, 0, 0, Infinity, renderParticleDust, updateParticleDust);
     particle.a = rand(0,360);
@@ -80,16 +90,16 @@ function createParticleDust(x,y) {
 
 function updateParticleDust(particle) {
     if(particle.x < camera.x - BASEWIDTH/2) {
-        particle.x = camera.x + BASEWIDTH/2;
+        particle.x += BASEWIDTH;
     }
     if(particle.x > camera.x + BASEWIDTH/2) {
-        particle.x = camera.x - BASEWIDTH/2;
+        particle.x -= BASEWIDTH;
     }
     if(particle.y < camera.y - BASEHEIGHT/2) {
-        particle.y = camera.y + BASEHEIGHT/2;
+        particle.y += BASEHEIGHT;
     }
     if(particle.y > camera.y + BASEHEIGHT/2) {
-        particle.y = camera.y - BASEHEIGHT/2;
+        particle.y -= BASEHEIGHT;
     }
     particle.a = player.dva;
     particle.l = 1+player.dvl;
@@ -154,6 +164,30 @@ function renderParticleLaser(particle) {
         circle(-offset*particle.v.x, -offset*particle.v.y, particle.r);
         fill();
     });
+}
+
+function renderParticleEnemyBullet(particle) {
+    let alpha = 1;
+    if(particle.ttl < 1) {
+        alpha = particle.ttl;
+    }
+    if(alpha < 0) {
+        alpha= 0;
+    }
+    fillStyle('rgba(255,255,255,'+alpha+')');
+    [0,1,2].forEach(offset => {
+        beginPath();
+        circle(-5*offset*particle.v.x, -5*offset*particle.v.y, particle.r-offset*1.5);
+        fill();
+    });
+    setFillModeDelete();
+    fillStyle('#fff');
+    [0,1,2 ].forEach(offset => {
+        beginPath();
+        circle(-5*offset*particle.v.x, -5*offset*particle.v.y, particle.r-offset*1.5 - 1);
+        fill(); 
+    });
+    setFillModeFill();
 }
 
 function renderParticleDust(particle) {

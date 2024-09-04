@@ -1,4 +1,5 @@
 const gulp = require('gulp');
+const fs = require('fs');
 
 const lintHTML = require('gulp-htmllint');
 const lintCSS = require('gulp-stylelint');
@@ -15,8 +16,9 @@ const imagemin = require('gulp-imagemin');
 const zip = require('gulp-zip');
 const checkFileSize = require('gulp-check-filesize');
 
-const babel = require("gulp-babel");
-const plumber = require("gulp-plumber");
+const roadroller = require('roadroller');
+//const babel = require("gulp-babel");
+//const plumber = require("gulp-plumber");
 
 const paths = {
     src: {
@@ -51,6 +53,7 @@ const paths = {
     dist: {
         dir: 'dist',
         css: 'style.min.css',
+        jsTemp: 'fear13.temp.js',
         js: 'fear13.min.js'
     }
 };
@@ -91,17 +94,38 @@ gulp.task('buildHTML', () => {
 gulp.task('buildCSS', () => {
     return gulp.src(paths.src.css)
         .pipe(concat(paths.dist.css))
-        .pipe(minifyCSS())
+        .pipe(minifyCSS({level: 2}))
         .pipe(gulp.dest(paths.dist.dir));
 });
 
+async function roadRollJs() {
+    let jsString = fs.readFileSync(paths.dist.dir + '/' + paths.dist.jsTemp, 'utf8');
+    
+    const packer = new roadroller.Packer([
+        {
+            data: fs.readFileSync(paths.dist.dir + '/' + paths.dist.jsTemp, 'utf8'),
+            type: 'js',
+            action: 'eval'
+        }
+    ]);
+    await packer.optimize(1);
+    const { firstLine, secondLine } = packer.makeDecoder();
+    jsString = firstLine + secondLine;
+    
+    fs.writeFileSync(paths.dist.dir + '/' + paths.dist.js, jsString, 'utf8');
+    fs.unlink(paths.dist.dir + '/' + paths.dist.jsTemp, (err)=>{});
+}
+
 gulp.task('buildJS', () => {
     return gulp.src(paths.src.js)
-        .pipe(concat(paths.dist.js))
+        .pipe(concat(paths.dist.jsTemp))
         .pipe(minifyJS({
             "toplevel": true
         }))
         .pipe(gulp.dest(paths.dist.dir));
+    
+    //roadRollJs()
+    //    .pipe(roadRollJs());
 });
 
 gulp.task('optimizeImages', () => {
@@ -131,13 +155,14 @@ gulp.task('test', gulp.parallel(
 gulp.task('build', gulp.series(
     'cleanDist',
     gulp.parallel('buildHTML', 'buildCSS', 'buildJS' ), //'optimizeImages'
+    roadRollJs,
     'zip'
 ));
 
 gulp.task('watch', () => {
-    gulp.watch(paths.src.html, gulp.series('buildHTML', 'zip'));
-    gulp.watch(paths.src.css, gulp.series('buildCSS', 'zip'));
-    gulp.watch(paths.src.js, gulp.series('buildJS', 'zip'));
+    gulp.watch(paths.src.html, gulp.series('build'));
+    gulp.watch(paths.src.css, gulp.series('build'));
+    gulp.watch(paths.src.js, gulp.series('build'));
     //gulp.watch(paths.src.images, gulp.series('optimizeImages', 'zip'));
 });
 
