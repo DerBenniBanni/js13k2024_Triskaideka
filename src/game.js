@@ -35,6 +35,8 @@ function getGameObjectsByType(type) {
     return gameObjects.filter(gameObject => gameObject.ot && gameObject.ot == type);
 }
 
+const waterCanvas = createSpriteBuffer(BASEWIDTH, BASEHEIGHT);
+
 
 function render() {
     ctx.clearRect(0,0,BASEWIDTH, BASEHEIGHT);
@@ -46,6 +48,17 @@ function render() {
     } else if(gameState == STATE_ACTION) {
         player._r();
         renderGround();
+        let [groundX,groundY] = getCameraView({x:0, y:GROUND_HEIGHT});
+        if(groundY < BASEHEIGHT) {
+            waterCanvas.ctx.clearRect(0,0,BASEWIDTH, BASEHEIGHT); 
+            waterCanvas.ctx.save();
+            waterCanvas.ctx.scale(1,-1)
+            waterCanvas.ctx.drawImage(canvas, 0,0, BASEWIDTH, BASEHEIGHT, 0,BASEHEIGHT-groundY+3, BASEWIDTH,-BASEHEIGHT);
+            waterCanvas.ctx.restore();
+            ctx.globalAlpha = 0.3;
+            ctx.drawImage(waterCanvas.c, 0, groundY, BASEWIDTH, BASEHEIGHT/3);
+            ctx.globalAlpha = 1;
+        }
     }
 }
 
