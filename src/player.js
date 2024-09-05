@@ -17,7 +17,8 @@ function createPlayer(x,y,rotationAngle) {
         // camera target
         t:{x,y},
         // fire rate in time between shots
-        fr:0.1,
+        fr:0.5/gameData[GAMEDATA_SHIP_FIRERATE],
+        l:gameData[GAMEDATA_SHIP_WEAPON],
         // last fire triggered (seconds)
         lf:0,
         // hitpoints
@@ -149,19 +150,34 @@ function updatePlayer(player, stick_horizontal, stick_vertical, delta) {
             for(let i = 0; i < 40; i++) {
                 addGameObject(createParticleDebris(player.x, player.y, 3, -300));
             }
+            msgDiv.classList.remove('hidden');
+            player.lf = -2;
         }
     }
-    let v = createAngleVector(player.a);
-    let v1 = createAngleVector(player.a-5);
-    let v2 = createAngleVector(player.a+5);
+    
+    
+    let v = createAngleVector(player.a); // vector, the player is facing to
     // fire triggered?
     player.lf += delta;
     player.ls += delta;
-    if((getGamepadButtonPressed(GAMEPAD_A) || keyActive(KEY_ACTION_FIRE)) && player.lf >= player.fr && player.alive) {
+    let firePressed = getGamepadButtonPressed(GAMEPAD_A) || keyActive(KEY_ACTION_FIRE);
+    if(firePressed && player.lf >= player.fr && player.alive) {
         playAudio(AUDIO_SFX_LASER);
-        gameObjects.push(createParticleLaser(player.x, player.y, v.x * 1200, v.y * 1200, 2));
-        gameObjects.push(createParticleLaser(player.x, player.y, v1.x * 1200, v1.y * 1200, 2));
-        gameObjects.push(createParticleLaser(player.x, player.y, v2.x * 1200, v2.y * 1200, 2));
+        if(player.l == 1 || player.l == 3) {
+            gameObjects.push(createParticleLaser(player.x, player.y, v.x * 1200, v.y * 1200, 2));
+        }
+        if(player.l == 2) {
+            let v1 = createAngleVector(player.a-2);
+            let v2 = createAngleVector(player.a+2);
+            gameObjects.push(createParticleLaser(player.x, player.y, v1.x * 1200, v1.y * 1200, 2));
+            gameObjects.push(createParticleLaser(player.x, player.y, v2.x * 1200, v2.y * 1200, 2));
+        } else if(player.l == 3) {
+            let v1 = createAngleVector(player.a-5);
+            let v2 = createAngleVector(player.a+5);
+            gameObjects.push(createParticleLaser(player.x, player.y, v.x * 1200, v.y * 1200, 2));
+            gameObjects.push(createParticleLaser(player.x, player.y, v1.x * 1200, v1.y * 1200, 2));
+            gameObjects.push(createParticleLaser(player.x, player.y, v2.x * 1200, v2.y * 1200, 2));
+        }
         player.lf= 0;
     }
     if(getGamepadButtonPressed(GAMEPAD_B)) {

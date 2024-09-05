@@ -23,6 +23,10 @@ const randInt = (min, max) => round(rand(min, max));
 const hexToInt = (h) => parseInt('0x' + h);
 const intToHex = (d) => (d <=15 ? "0" : "") + Number(d).toString(16);
 
+function getRandomEntry(list) {
+    return list[Math.floor((Math.random()*list.length))];
+}
+
 
 
 const samePosition = (p1, p2, delta) => abs(p1.x - p2.x) < delta && abs(p1.y - p2.y) < delta;

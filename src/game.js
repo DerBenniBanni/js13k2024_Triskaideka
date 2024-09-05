@@ -19,12 +19,42 @@ let gameState = STATE_MENU;
 const GAMEDATA_POINTS = 0;
 const GAMEDATA_XP = 1;
 const GAMEDATA_SHIP_WEAPON = 2;
-const GAMEDATA_SHIP_SHIELD = 3;
+const shipWeaponMaxValue = 3;
+const GAMEDATA_SHIP_FIRERATE = 3;
+const shipFirerateMaxValue = 5; // shots per second
 const gameData = {}
 gameData[GAMEDATA_POINTS] = 0;
 gameData[GAMEDATA_XP] = 0;
 gameData[GAMEDATA_SHIP_WEAPON] = 1;
-gameData[GAMEDATA_SHIP_SHIELD] = 0;
+gameData[GAMEDATA_SHIP_FIRERATE] = 1;
+
+const msgDiv = document.querySelector('.msg');
+let currentLevel = 0;
+const levels = [
+    // first level, how it will end....
+    {
+        e:40, // enemies
+        sn:2, // snakes
+        sq:2, //squids
+        p: { // player modifications
+            fr:0.1,
+            l:3,
+            y:600,
+            dy:-2,
+            h:1
+        },
+        hideUpdates: true, // show upgrade-buttons?
+        m:"LAUNCH",
+        end:"Yep, that's me!\nYou are probably wondering, how I ended up in this situation.\nIt all began 13 days ago, when the first scouts of the aliens now known as 'Triskaideka' entered earths atmosphere.\nThe arrival of them triggered a global mass hysteria:\n\nTRISKAIDEKA-PHOBIA"
+            + "\n\nAs my experimental Jet, the A.I.R.W.O.L.F.\n(Advanced Intercept Rocket, Worlds Only and Last hope for Future)\nis the only capable craft to defend earth, so I am now flying countless missions against the intruders."
+            + "\n\nBut lets have a look at all the events from the beginning...",
+        adv:true // advance level even if failed
+    },
+    {
+        e:5,
+        m:"Day 1 - start mission"
+    }
+]
 
 function addGameObject(gameObject) {
     gameObjects.push(gameObject);
@@ -55,7 +85,7 @@ function render() {
             waterCanvas.ctx.scale(1,-1)
             waterCanvas.ctx.drawImage(canvas, 0,0, BASEWIDTH, BASEHEIGHT, 0,BASEHEIGHT-groundY+3, BASEWIDTH,-BASEHEIGHT);
             waterCanvas.ctx.restore();
-            ctx.globalAlpha = 0.3;
+            ctx.globalAlpha = 0.5;
             ctx.drawImage(waterCanvas.c, 0, groundY, BASEWIDTH, BASEHEIGHT/3);
             ctx.globalAlpha = 1;
         }
@@ -66,7 +96,7 @@ function renderGround() {
     saveContext();
     translateContext(camera.x-BASEWIDTH/2, GROUND_HEIGHT);
     ctx.clearRect(0,0,BASEWIDTH, BASEHEIGHT);
-    fillStyle('#ccf6');
+    fillStyle('#0056');
     fillRect(0,0,BASEWIDTH, BASEHEIGHT);
     let y = 0;
     [5,4,3,1].forEach(lineWidth => {
@@ -109,13 +139,15 @@ function update() {
         if(!menuDirectionWasReleased && !downPressed && !upPressed) {
             menuDirectionWasReleased = true;
         }
-        if(activeButton && activeButton.l[DIRECTION_DOWN] && downPressed) {
+        if(activeButton && activeButton.l[DIRECTION_DOWN] && downPressed && menuDirectionWasReleased) {
             activeButton.l[DIRECTION_DOWN].a = true;
             activeButton.a =false;
+            menuDirectionWasReleased = false;
         }
-        if(activeButton && activeButton.l[DIRECTION_UP] && upPressed) {
+        if(activeButton && activeButton.l[DIRECTION_UP] && upPressed && menuDirectionWasReleased) {
             activeButton.l[DIRECTION_UP].a = true;
             activeButton.a =false;
+            menuDirectionWasReleased = false;
         }
         
     } else if(gameState == STATE_ACTION) {
@@ -230,6 +262,19 @@ function update() {
                 }
             })
         });
+
+        let actionPressed = getGamepadButtonPressed(GAMEPAD_A) || keyActive(KEY_ACTION_FIRE);
+        if(!player.alive && player.lf >0 && actionPressed) {
+            if(levels[currentLevel].adv) {
+                currentLevel++;
+            }
+            loadGameMenu();
+        } else if(player.alive && snakes.length + enemies.length + squids.length == 0) {
+            if(player.lf >0 && actionPressed) {
+                currentLevel++;
+                loadGameMenu();
+            }
+        }
     }
 
     gameObjects.forEach(gameObject => {
@@ -276,6 +321,7 @@ function clearObjects() {
 let menuActionWasReleased = false;
 let menuDirectionWasReleased = false;
 function loadGameMenu() {
+    msgDiv.classList.add('hidden');
     menuActionWasReleased = false;
     menuDirectionWasReleased = false;
     clearObjects();
@@ -284,27 +330,70 @@ function loadGameMenu() {
     camera.t = null;
     gameState = STATE_MENU;
     addGameObject(createTriskaideka(BASEWIDTH/2,70, 0.8));
-    let btnStartMission = addGameObject(createButton(BASEWIDTH/2,500,300,40,"START MISSION", true, loadGameAction));
-    let btnUpgradeLaser = addGameObject(createButton(BASEWIDTH/2,570,300,40,"UPGRADE LASER", false, upgradeLaser));
-    linkButtons(btnStartMission, btnUpgradeLaser, DIRECTION_DOWN);
+    let level = levels[currentLevel];
+
+    let btnStartMission = addGameObject(createButton(BASEWIDTH/2,450,300,40,level.m, true, loadGameAction));
+    if(!level.hideUpdates) {
+        let btnUpgradeLaser = addGameObject(createButton(BASEWIDTH/2,570,350,40,"ADD LASERS", false, upgradeLaser));
+        btnUpgradeLaser._u = (delta) => {btnUpgradeLaser.t = "UPGRADE LASER (" + (gameData[GAMEDATA_SHIP_WEAPON] == shipWeaponMaxValue ? "MAX" : gameData[GAMEDATA_SHIP_WEAPON]) + ")"}
+        let btnUpgradeFireRate = addGameObject(createButton(BASEWIDTH/2,620,350,40,"ENHANCE FIRE RATE", false, upgradeFireRate));
+        btnUpgradeFireRate._u = (delta) => {btnUpgradeFireRate.t = "ENHANCE FIRE RATE (" + (gameData[GAMEDATA_SHIP_FIRERATE] == shipFirerateMaxValue ? "MAX" : gameData[GAMEDATA_SHIP_FIRERATE]) + ")"}
+        linkButtons(btnStartMission, btnUpgradeLaser, DIRECTION_DOWN);
+        linkButtons(btnUpgradeLaser, btnUpgradeFireRate, DIRECTION_DOWN);
+    }
 }
 
 function upgradeLaser() {
-    gameData[GAMEDATA_SHIP_WEAPON] += 1;
+    if(gameData[GAMEDATA_SHIP_WEAPON] < shipWeaponMaxValue) {
+        gameData[GAMEDATA_SHIP_WEAPON] += 1;
+    }
 }
+
+function upgradeFireRate() {
+    if(gameData[GAMEDATA_SHIP_FIRERATE] < shipFirerateMaxValue) {
+        gameData[GAMEDATA_SHIP_FIRERATE] += 1;
+    }
+}
+
+
 let player = null;
 
 function loadGameAction() {
+    msgDiv.classList.add('hidden');
+    let level = levels[currentLevel];
+    msgDiv.innerText = level.end;
     clearObjects();
     gameState = STATE_ACTION;
     player = createPlayer(BASEWIDTH/2,GROUND_HEIGHT-3, -90);
-
+    for(let val in level.p) {
+        player[val] = level.p[val];
+    }
 
     
     for(let i = 0; i < 50; i++) {
         addGameObject(createParticleDust(rand(0, BASEWIDTH),rand(0, BASEHEIGHT)));
     }
-    
+
+    for(let i = 0; i < level.e; i++) {
+        let wing = getRandomEntry([ENEMY_WING_A, ENEMY_WING_B, ENEMY_WING_C, ENEMY_WING_D, ENEMY_WING_E]);
+        let hull = getRandomEntry([ENEMY_HULL_A, ENEMY_HULL_B, ENEMY_HULL_C]);
+        let cockpit = getRandomEntry([ENEMY_COCKPIT_A, ENEMY_COCKPIT_B, ENEMY_COCKPIT_C]);
+        addGameObject(createEnemy(rand(-BASEWIDTH, BASEWIDTH*2), rand(-BASEHEIGHT*2,0),[wing, hull, cockpit]));
+    }
+
+    for(let i = 0; i < level.sn; i++) {
+        let x = player.x + (randInt(0,1) == 0 ? -1 : 1)*(200 + rand(0, BASEWIDTH))
+        let y = player.y - rand(0, BASEHEIGHT);
+        addGameObject(createSnake(x, y, randInt(13,33), randInt(13,33), rand(20,40)));
+    }
+
+
+    for(let i = 0; i < level.sq; i++) {
+        let x = player.x + (randInt(0,1) == 0 ? -1 : 1)*(300 + rand(0, BASEWIDTH))
+        let y = player.y - rand(0, BASEHEIGHT);
+        addGameObject(createSquid(x, y, rand(60,100)));
+    }
+    /*
     [ENEMY_WING_A, ENEMY_WING_B, ENEMY_WING_C, ENEMY_WING_D, ENEMY_WING_E].forEach((wing,i) => {
         let x = 100 + i*50;
         [ENEMY_HULL_A, ENEMY_HULL_B, ENEMY_HULL_C].forEach((hull,j) => {
@@ -316,13 +405,8 @@ function loadGameAction() {
             });
         });
     });
-    
-    addGameObject(createSquid(900,200, 80));
+    */
 
-
-    addGameObject(createSnake(400,200, 20, 13, 20));
-    addGameObject(createSnake(600,600, 15, 26, 30));
-    addGameObject(createSnake(1900,400, 30, 20, 25));
 
     playAudio(AUDIO_SONG_AIRWOLF);
 }
