@@ -73,7 +73,17 @@ function updateSquid(squid, delta) {
     });
        
     if(squid.hp <= 0) {
-        squid.ttl = 0;
+        if(currentLevel == 0) {
+            squid.y -= BASEHEIGHT;
+            squid.t.forEach(t => t.y -= BASEHEIGHT);
+            squid.hp = 20;
+        } else {
+            squid.ttl = -1;
+            squid.t.forEach(t => {
+                t.ot = GAMEOBJECT_TYPE_SNAKE;
+                addGameObject(t);
+            });
+        }
         explodeSquid(squid);
     }
 }

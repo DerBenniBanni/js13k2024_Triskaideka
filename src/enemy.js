@@ -10,7 +10,7 @@ function createEnemy(x, y, components) {
         ot:GAMEOBJECT_TYPE_ENEMY,
         r:15, // collission radius
         hp:2,
-        s:50, // Speed in pixel per second
+        s:rand(50,120), // Speed in pixel per second
         t:{x:BASEWIDTH/2 + rand(-500, 500),y:BASEHEIGHT/2 + rand(-400, 400)},
         ti:rand(2,5), // TargetChangeInterval in seconds
         tc:0, //targetChangeCountdown
@@ -81,7 +81,7 @@ function createEnemyImage(enemy) {
     rotateContext(-90);
     enemy.c.forEach(points => {
         beginPath();
-        fillStyle(COLOR_BLACK);
+        fillStyle('#07a');
         strokeStyle(COLOR_WHITE);
         moveTo(points[0], points[1]);
         let length = points.length;
@@ -99,9 +99,9 @@ function createEnemyImage(enemy) {
         if(close) {
             lineTo(points[0], points[1]);
         }
-        setFillModeDelete();
+        //setFillModeDelete();
         fill();
-        setFillModeFill();
+        //setFillModeFill();
         stroke();
     });
     restoreContext();

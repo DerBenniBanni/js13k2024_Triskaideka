@@ -30,31 +30,7 @@ gameData[GAMEDATA_SHIP_FIRERATE] = 1;
 
 const msgDiv = document.querySelector('.msg');
 let currentLevel = 0;
-const levels = [
-    // first level, how it will end....
-    {
-        e:40, // enemies
-        sn:2, // snakes
-        sq:2, //squids
-        p: { // player modifications
-            fr:0.1,
-            l:3,
-            y:600,
-            dy:-2,
-            h:1
-        },
-        hideUpdates: true, // show upgrade-buttons?
-        m:"LAUNCH",
-        end:"Yep, that's me!\nYou are probably wondering, how I ended up in this situation.\nIt all began 13 days ago, when the first scouts of the aliens now known as 'Triskaideka' entered earths atmosphere.\nThe arrival of them triggered a global mass hysteria:\n\nTRISKAIDEKA-PHOBIA"
-            + "\n\nAs my experimental Jet, the A.I.R.W.O.L.F.\n(Advanced Intercept Rocket, Worlds Only and Last hope for Future)\nis the only capable craft to defend earth, so I am now flying countless missions against the intruders."
-            + "\n\nBut lets have a look at all the events from the beginning...",
-        adv:true // advance level even if failed
-    },
-    {
-        e:5,
-        m:"Day 1 - start mission"
-    }
-]
+
 
 function addGameObject(gameObject) {
     gameObjects.push(gameObject);
@@ -160,9 +136,11 @@ function update() {
         let snakes = getGameObjectsByType(GAMEOBJECT_TYPE_SNAKE);
         let enemies = getGameObjectsByType(GAMEOBJECT_TYPE_ENEMY);
         let squids = getGameObjectsByType(GAMEOBJECT_TYPE_SQUID);
-        if(snakes.length + enemies.length + squids.length == 0) {
-            loadGameMenu();
-            return;
+        if(!player.won && snakes.length + enemies.length + squids.length == 0) {
+            player.lf = -2;
+            msgDiv.classList.remove('hidden');
+            msgDiv.innerText = levels[currentLevel].success;
+            player.won = true;;
         }
         if(player.alive) {
             enemies.forEach(enemy => {
@@ -229,7 +207,12 @@ function update() {
                     }
                     playAudio(AUDIO_SFX_HIT);
                     if(snake.hp == 0) {
-                        snake.ttl = -1;
+                        if(currentLevel == 0) {
+                            snake.y -= BASEHEIGHT;
+                            snake.hp = 10;
+                        } else {
+                            snake.ttl = -1;
+                        }
                         explodeSnake(snake);
                         playAudio(AUDIO_SFX_EXPLOSION);
                     }
@@ -244,7 +227,12 @@ function update() {
                     }
                     playAudio(AUDIO_SFX_HIT);
                     if(enemy.hp == 0) {
-                        enemy.ttl = -1;
+                        if(currentLevel == 0) {
+                            enemy.y -= BASEHEIGHT;
+                            enemy.hp = 10;
+                        } else {
+                            enemy.ttl = -1;
+                        }
                         explodeEnemy(enemy);
                         playAudio(AUDIO_SFX_EXPLOSION);
                     }
@@ -269,7 +257,7 @@ function update() {
                 currentLevel++;
             }
             loadGameMenu();
-        } else if(player.alive && snakes.length + enemies.length + squids.length == 0) {
+        } else if(player.won) {
             if(player.lf >0 && actionPressed) {
                 currentLevel++;
                 loadGameMenu();
@@ -332,6 +320,10 @@ function loadGameMenu() {
     addGameObject(createTriskaideka(BASEWIDTH/2,70, 0.8));
     let level = levels[currentLevel];
 
+    if(level.d) {
+        addGameObject(createText(BASEWIDTH/2,370,level.d));
+    }
+
     let btnStartMission = addGameObject(createButton(BASEWIDTH/2,450,300,40,level.m, true, loadGameAction));
     if(!level.hideUpdates) {
         let btnUpgradeLaser = addGameObject(createButton(BASEWIDTH/2,570,350,40,"ADD LASERS", false, upgradeLaser));
@@ -361,7 +353,7 @@ let player = null;
 function loadGameAction() {
     msgDiv.classList.add('hidden');
     let level = levels[currentLevel];
-    msgDiv.innerText = level.end;
+    msgDiv.innerText = level.success;
     clearObjects();
     gameState = STATE_ACTION;
     player = createPlayer(BASEWIDTH/2,GROUND_HEIGHT-3, -90);

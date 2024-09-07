@@ -9,6 +9,14 @@ function createButton(x,y,w,h,text,active,click) {
     return btn;
 }
 
+function createText(x,y,text) {
+    let textObject = {
+        x,y,t:text
+    };
+    textObject._r = ()=>renderText(textObject);
+    return textObject;
+}
+
 const DIRECTION_DOWN = 1;
 const DIRECTION_UP = -1;
 
@@ -34,5 +42,16 @@ function renderButton(btn) {
     ctx.textAlign = "center";
     ctx.textBaseline  = "middle";
     ctx.fillText(btn.t, btn.w/2, btn.h/2);
+    restoreContext();
+}
+
+function renderText(text) {
+    saveContext();
+    translateContext(text.x, text.y);
+    fillStyle(COLOR_WHITE);
+    ctx.font = '30px sans-serif';
+    ctx.textAlign = "center";
+    ctx.textBaseline  = "middle";
+    ctx.fillText(text.t, 0, 0);
     restoreContext();
 }

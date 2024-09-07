@@ -151,6 +151,7 @@ function updatePlayer(player, stick_horizontal, stick_vertical, delta) {
                 addGameObject(createParticleDebris(player.x, player.y, 3, -300));
             }
             msgDiv.classList.remove('hidden');
+            msgDiv.innerText = levels[currentLevel].failure;
             player.lf = -2;
         }
     }
@@ -161,9 +162,9 @@ function updatePlayer(player, stick_horizontal, stick_vertical, delta) {
     player.lf += delta;
     player.ls += delta;
     let firePressed = getGamepadButtonPressed(GAMEPAD_A) || keyActive(KEY_ACTION_FIRE);
-    if(firePressed && player.lf >= player.fr && player.alive) {
+    if(firePressed && player.lf >= player.fr && player.alive && !player.won) {
         playAudio(AUDIO_SFX_LASER);
-        if(player.l == 1 || player.l == 3) {
+        if(player.l == 1 || player.l == 3 && player.alive) {
             gameObjects.push(createParticleLaser(player.x, player.y, v.x * 1200, v.y * 1200, 2));
         }
         if(player.l == 2) {
