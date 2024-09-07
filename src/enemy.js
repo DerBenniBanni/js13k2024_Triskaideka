@@ -123,16 +123,18 @@ const ENEMY_COCKPIT_B = [-5,-10, -4,-12, -2,-15, -1,-20, 0];
 const ENEMY_COCKPIT_C = [-5,-10, -8,-10, -3,-15, -3,-20, -2,-16, 0];
 
 function renderEnemy(enemy) {
-    saveContext();
-    translateContext(enemy.x, enemy.y);
-    rotateContext(enemy.a);
-    drawImage(enemy.i.c, -enemy.i.w/2, -enemy.i.h/2);
-    /* debug hit area
-    beginPath();
-    strokeStyle('#ff0')
-    circle(0,0,enemy.r);
-    stroke();
-    */
-    restoreContext();
+    if(!isInView(enemy, 15)) {
+        let p = getStandardVector(pointDifferenceVector(player, enemy), 350);
+        fillStyle('#f00a');
+        beginPath();
+        circle(BASEWIDTH/2 + p.x, BASEHEIGHT/2 + p.y, 4);
+        fill();
+    } else {
+        saveContext();
+        translateContext(enemy.x, enemy.y);
+        rotateContext(enemy.a);
+        drawImage(enemy.i.c, -enemy.i.w/2, -enemy.i.h/2);
+        restoreContext();
+    }
 }
 

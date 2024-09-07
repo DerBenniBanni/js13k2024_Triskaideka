@@ -9,9 +9,9 @@ function createButton(x,y,w,h,text,active,click) {
     return btn;
 }
 
-function createText(x,y,text) {
+function createText(x,y,text, size = 30) {
     let textObject = {
-        x,y,t:text
+        x,y,t:text, s:size
     };
     textObject._r = ()=>renderText(textObject);
     return textObject;
@@ -49,7 +49,7 @@ function renderText(text) {
     saveContext();
     translateContext(text.x, text.y);
     fillStyle(COLOR_WHITE);
-    ctx.font = '30px sans-serif';
+    ctx.font = text.s + 'px sans-serif';
     ctx.textAlign = "center";
     ctx.textBaseline  = "middle";
     ctx.fillText(text.t, 0, 0);

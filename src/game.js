@@ -30,6 +30,7 @@ gameData[GAMEDATA_SHIP_FIRERATE] = 1;
 
 const msgDiv = document.querySelector('.msg');
 let currentLevel = 0;
+let upgradePoints = 0;
 
 
 function addGameObject(gameObject) {
@@ -207,7 +208,8 @@ function update() {
                     }
                     playAudio(AUDIO_SFX_HIT);
                     if(snake.hp == 0) {
-                        if(currentLevel == 0) {
+                        if(respawns > 0) {
+                            respawns--;
                             snake.y -= BASEHEIGHT;
                             snake.hp = 10;
                         } else {
@@ -227,9 +229,10 @@ function update() {
                     }
                     playAudio(AUDIO_SFX_HIT);
                     if(enemy.hp == 0) {
-                        if(currentLevel == 0) {
+                        if(respawns > 0) {
+                            respawns--;
                             enemy.y -= BASEHEIGHT;
-                            enemy.hp = 10;
+                            enemy.hp = 2;
                         } else {
                             enemy.ttl = -1;
                         }
@@ -260,6 +263,7 @@ function update() {
         } else if(player.won) {
             if(player.lf >0 && actionPressed) {
                 currentLevel++;
+                upgradePoints++;
                 loadGameMenu();
             }
         }
@@ -326,6 +330,8 @@ function loadGameMenu() {
 
     let btnStartMission = addGameObject(createButton(BASEWIDTH/2,450,300,40,level.m, true, loadGameAction));
     if(!level.hideUpdates) {
+        let textUpgradePoints = addGameObject(createText(BASEWIDTH/2,530,"Available scrap for upgrades: 0", 30));
+        textUpgradePoints._u = (delta) => textUpgradePoints.t = "Available scrap for upgrades: "+upgradePoints;
         let btnUpgradeLaser = addGameObject(createButton(BASEWIDTH/2,570,350,40,"ADD LASERS", false, upgradeLaser));
         btnUpgradeLaser._u = (delta) => {btnUpgradeLaser.t = "UPGRADE LASER (" + (gameData[GAMEDATA_SHIP_WEAPON] == shipWeaponMaxValue ? "MAX" : gameData[GAMEDATA_SHIP_WEAPON]) + ")"}
         let btnUpgradeFireRate = addGameObject(createButton(BASEWIDTH/2,620,350,40,"ENHANCE FIRE RATE", false, upgradeFireRate));
@@ -333,26 +339,38 @@ function loadGameMenu() {
         linkButtons(btnStartMission, btnUpgradeLaser, DIRECTION_DOWN);
         linkButtons(btnUpgradeLaser, btnUpgradeFireRate, DIRECTION_DOWN);
     }
+
+    addGameObject(createText(BASEWIDTH/2,BASEHEIGHT-40,"A 13 kilobyte game by DerBenniBanni (Github / itch.io / X) for the 2024 js13kgames.com gamejam", 20));
+    
+    if(currentLevel > 0) {
+        playAudio(AUDIO_SONG_AIRWOLFMENU);
+        stopAudio(AUDIO_SONG_AIRWOLF);
+    }
+
 }
 
 function upgradeLaser() {
-    if(gameData[GAMEDATA_SHIP_WEAPON] < shipWeaponMaxValue) {
+    if(upgradePoints > 0 && gameData[GAMEDATA_SHIP_WEAPON] < shipWeaponMaxValue) {
         gameData[GAMEDATA_SHIP_WEAPON] += 1;
+        upgradePoints--;
     }
 }
 
 function upgradeFireRate() {
-    if(gameData[GAMEDATA_SHIP_FIRERATE] < shipFirerateMaxValue) {
+    if(upgradePoints > 0 && gameData[GAMEDATA_SHIP_FIRERATE] < shipFirerateMaxValue) {
         gameData[GAMEDATA_SHIP_FIRERATE] += 1;
+        upgradePoints--;
     }
 }
 
 
 let player = null;
+let respawns = 0;
 
 function loadGameAction() {
     msgDiv.classList.add('hidden');
     let level = levels[currentLevel];
+    respawns = level.respawn ? level.respawn : 0;
     msgDiv.innerText = level.success;
     clearObjects();
     gameState = STATE_ACTION;
@@ -399,6 +417,7 @@ function loadGameAction() {
     });
     */
 
-
+    
     playAudio(AUDIO_SONG_AIRWOLF);
+    stopAudio(AUDIO_SONG_AIRWOLFMENU);
 }

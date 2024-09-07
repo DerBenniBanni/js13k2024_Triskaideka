@@ -11,30 +11,38 @@ function createTriskaideka(x,y,size = 1) {
 function renderTriskaideka(tris) {
     let x = tris.x;
     let y = tris.y;
-    let size = tris.s;
-    saveContext();
-    translateContext(x-triskaidekaOriginX * size, y-triskaidekaOriginY * size);
-    ctx.lineWidth = 3;
-    strokeStyle('#d00');
-    fillStyle('#f00');
-    triskaidekaLetters.forEach(letter=> {
-        beginPath();
-        moveTo(letter[0] * size, letter[1] * size);
-        for(let i = 2; i < letter.length -1; i+=2) {
-            lineTo(letter[i] * size, letter[i+1] * size);
+    let c = 80;
+    let dy = 5;
+    [0.975, 0.98, 0.985, 0.99, 0.995, 1].forEach(sizeFactor => {
+        let size = tris.s * sizeFactor;
+        saveContext();
+        translateContext(x-triskaidekaOriginX * size, y-triskaidekaOriginY * size + dy);
+        dy-=2;
+        ctx.lineWidth = 4;
+        c+=20;
+        strokeStyle('#' + intToHex(c) + '0000');
+        fillStyle('#f00');
+        triskaidekaLetters.forEach(letter=> {
+            beginPath();
+            moveTo(letter[0] * size, letter[1] * size);
+            for(let i = 2; i < letter.length -1; i+=2) {
+                lineTo(letter[i] * size, letter[i+1] * size);
+            }
+            lineTo(letter[0] * size, letter[1] * size);
+            fill();
+            stroke();
+        });
+        ctx.lineWidth = 1;
+        if(sizeFactor == 1) {
+            fillStyle('#ff8');
+            ctx.font = (70*size) + "px Impact, Haettenschweiler, 'Arial Narrow Bold', sans-serif";
+            ctx.textAlign = "left";
+            ctx.textBaseline  = "bottom";
+            ctx.fillText("AAAARGHHHHH!",100*size,0);
+            ctx.textAlign = "right";
+            ctx.textBaseline  = "top";
+            ctx.fillText("ATTACKS!!!",1700*size,250*size);
         }
-        lineTo(letter[0] * size, letter[1] * size);
-        fill();
-        stroke();
+        restoreContext();
     });
-    ctx.lineWidth = 1;
-    fillStyle('#ff8c');
-    ctx.font = (70*size) + "px Impact, Haettenschweiler, 'Arial Narrow Bold', sans-serif";
-    ctx.textAlign = "left";
-    ctx.textBaseline  = "bottom";
-    ctx.fillText("AAAARGHHHHH!",100*size,0);
-    ctx.textAlign = "right";
-    ctx.textBaseline  = "top";
-    ctx.fillText("ATTACKS!!!",1700*size,250*size);
-    restoreContext();
 }

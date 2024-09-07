@@ -29,27 +29,36 @@ function createTentacle(x,y,size,segments, minAngle, maxAngle) {
 }
 
 function renderSquid(squid) {
-    saveContext();
-    translateContext(squid.x, squid.y);
-    beginPath();
-    strokeStyle(COLOR_WHITE);
-    circle(0,0,squid.s);
-    stroke();
-    restoreContext();
-    squid.t.forEach(t => t._r());
-    saveContext();
-    setFillModeDelete();
-    translateContext(squid.x, squid.y);
-    beginPath();
-    fillStyle(COLOR_WHITE);
-    circle(0,0,squid.s-2);
-    fill();
-    setFillModeFill();
+    if(!isInView(squid, squid.s)) {
+        let p = getStandardVector(pointDifferenceVector(player, squid), 350);
+        fillStyle('#f00a');
+        beginPath();
+        circle(BASEWIDTH/2 + p.x, BASEHEIGHT/2 + p.y, 10);
+        fill();
+    }
+    if(isInView(squid, squid.s*2)) {
+        saveContext();
+        translateContext(squid.x, squid.y);
+        beginPath();
+        strokeStyle(COLOR_WHITE);
+        circle(0,0,squid.s);
+        stroke();
+        restoreContext();
+        squid.t.forEach(t => t._r());
+        saveContext();
+        setFillModeDelete();
+        translateContext(squid.x, squid.y);
+        beginPath();
+        fillStyle(COLOR_WHITE);
+        circle(0,0,squid.s-2);
+        fill();
+        setFillModeFill();
 
-    renderEye(0, -squid.s/2, squid.s/3, squid.s/6, squid.ta);
-    renderEye(squid.s/2, squid.s/4, squid.s/5, squid.s/9, squid.ta);
-    renderEye(-squid.s/2, squid.s/4, squid.s/5, squid.s/9, squid.ta);
-    restoreContext();
+        renderEye(0, -squid.s/2, squid.s/3, squid.s/6, squid.ta);
+        renderEye(squid.s/2, squid.s/4, squid.s/5, squid.s/9, squid.ta);
+        renderEye(-squid.s/2, squid.s/4, squid.s/5, squid.s/9, squid.ta);
+        restoreContext();
+    }
 }
 
 function updateSquid(squid, delta) {
@@ -73,7 +82,8 @@ function updateSquid(squid, delta) {
     });
        
     if(squid.hp <= 0) {
-        if(currentLevel == 0) {
+        if(respawns > 0) {
+            respawns--;
             squid.y -= BASEHEIGHT;
             squid.t.forEach(t => t.y -= BASEHEIGHT);
             squid.hp = 20;

@@ -48,7 +48,7 @@ canvas {
 	width:calc(100vw - 200px);
 	min-height: calc(100vh - 200px);
 	background-color: #0254;
-	color:#adf;
+	color:rgb(218, 240, 255);
 	border: 3px solid #adf;
 	border-radius: 20px;;
 	font: bold 'Courier New', Courier, monospace;

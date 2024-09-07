@@ -2,6 +2,12 @@ const camera = {
     // camera looks at middle of the screen
     x:BASEWIDTH/2,
     y:BASEHEIGHT/2,
+    bb:{ // boundingbox
+        l:0,
+        r:BASEWIDTH,
+        t:0,
+        b:BASEHEIGHT
+    },
     dx:0,
     dy:0,
     // effects (Screenshake)
@@ -25,6 +31,11 @@ function updateCamera(cam, delta) {
         cam.dy =aimVector.y * speed;
         cam.x += cam.dx * delta;
         cam.y += cam.dy * delta;
+        //boundingbox
+        cam.bb.l = cam.x-BASEWIDTH/2;
+        cam.bb.r = cam.x+BASEWIDTH/2;
+        cam.bb.t = cam.y-BASEHEIGHT/2;
+        cam.bb.b = cam.y+BASEHEIGHT/2;
     }
     if(cam.et > 0) {
         cam.et -= delta;
@@ -34,6 +45,13 @@ function updateCamera(cam, delta) {
         cam.ex = 0;
         cam.ey = 0;
     }
+}
+
+function isInView(gameObject, buffer) {
+    return gameObject.x >= camera.bb.l - buffer
+        && gameObject.x <= camera.bb.r + buffer
+        && gameObject.y >= camera.bb.t - buffer
+        && gameObject.y <= camera.bb.b + buffer;
 }
 
 function getCameraView(point) {
