@@ -84,8 +84,13 @@ function updateSquid(squid, delta) {
     if(squid.hp <= 0) {
         if(respawns > 0) {
             respawns--;
-            squid.y -= BASEHEIGHT;
-            squid.t.forEach(t => t.y -= BASEHEIGHT);
+            squid.y -= BASEHEIGHT/2;
+            let xdiff = rand(0,1) >= 0.5 ? BASEWIDTH: -BASEWIDTH
+            squid.x += xdiff;
+            squid.t.forEach(t => {
+                t.y -= BASEHEIGHT/2;
+                t.x += xdiff;
+            });
             squid.hp = 20;
         } else {
             squid.ttl = -1;

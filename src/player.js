@@ -89,35 +89,42 @@ function updatePlayer(player, stick_horizontal, stick_vertical, delta) {
     if(player.h <= 0) {
         player.a -= 360 * delta;
         stopAudio(AUDIO_SFX_ENGINE);
-    } else if(playerMode == PLAYER_MODE_DIRECTIONAL) {
+    } else {
         let gamepadVector = getGamepadStickVector(stick_horizontal, stick_vertical);
-        if(gamepadVector && vectorLength(gamepadVector) > 0.2) {
-            player.a = getVectorAngleDegrees(gamepadVector);
-            player.dx += gamepadVector.x * 5 * delta;
-            player.dy += gamepadVector.y * 5 * delta;
-            gameObjects.push(createParticleExhaust(player.x, player.y, -gamepadVector.x * 400, -gamepadVector.y * 400, 1));
-        } else {
-            player.dx *= 0.99;
-            player.dy *= 0.99;
+        playerMode = gamepadVector && vectorLength(gamepadVector) > 0.2 ? PLAYER_MODE_DIRECTIONAL : PLAYER_MODE_ROTATIONAL;
+        if(playerMode == PLAYER_MODE_DIRECTIONAL) {
+        
+            let targetAngle = getVectorAngleDegrees(gamepadVector)+360;
+            let diffAngle = (targetAngle - player.a  + 180) % 360 - 180;
+            let turnspeed = 360; // angel per second
+            let maxTurn = turnspeed * delta;
+            if(diffAngle < 0) {
+                player.a += diffAngle < -maxTurn ? -maxTurn : diffAngle;
+            } else if(diffAngle > 0) {
+                player.a += diffAngle > maxTurn ? maxTurn : diffAngle;
+            }
+            player.a = normalizeAngle(player.a);
+
+        } else if(playerMode == PLAYER_MODE_ROTATIONAL) {
+            let stickHorizontal = getGamepadStickValue(STICK_LEFT_HORIZONTAL);
+            if(keyActive(KEY_ACTION_LEFT) || getGamepadButtonPressed(GAMEPAD_LEFT)) {
+                stickHorizontal = -1;
+            }
+            if(keyActive(KEY_ACTION_RIGHT) || getGamepadButtonPressed(GAMEPAD_RIGHT)) {
+                stickHorizontal = 1;
+            }
+            if(abs(stickHorizontal) > 0.1) {
+                player.a += stickHorizontal * delta * player.as;
+            }
+            
         }
-    } else if(playerMode == PLAYER_MODE_ROTATIONAL) {
-        let stickHorizontal = getGamepadStickValue(STICK_LEFT_HORIZONTAL);
-        if(keyActive(KEY_ACTION_LEFT)) {
-            stickHorizontal = -1;
+        let thrustInput = 0;
+        if(keyActive(KEY_ACTION_UP)|| getGamepadButtonPressed(GAMEPAD_UP)|| getGamepadButtonPressed(GAMEPAD_THRUST)) {
+            thrustInput = -1;
         }
-        if(keyActive(KEY_ACTION_RIGHT)) {
-            stickHorizontal = 1;
-        }
-        if(abs(stickHorizontal) > 0.1) {
-            player.a += stickHorizontal * delta * player.as;
-        }
-        let stickVertical = getGamepadStickValue(STICK_LEFT_VERTICAL);
-        if(keyActive(KEY_ACTION_UP)) {
-            stickVertical = -1;
-        }
-        if(stickVertical < -0.1) {
+        if(thrustInput < -0.1) {
             let thrustDirectionVector = createAngleVector(player.a + rand(-10,10));
-            let thrust = multiplyVector(thrustDirectionVector, -stickVertical * 7 * delta);
+            let thrust = multiplyVector(thrustDirectionVector, -thrustInput * 7 * delta);
             player.dx += thrust.x;
             player.dy += thrust.y;
             gameObjects.push(createParticleExhaust(player.x, player.y, player.dx-thrustDirectionVector.x * 400, player.dy-thrustDirectionVector.y * 400, 1));

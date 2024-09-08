@@ -210,7 +210,8 @@ function update() {
                     if(snake.hp == 0) {
                         if(respawns > 0) {
                             respawns--;
-                            snake.y -= BASEHEIGHT;
+                            snake.y -= BASEHEIGHT/2;
+                            snake.x += rand(0,1) >= 0.5 ? BASEWIDTH: -BASEWIDTH;
                             snake.hp = 10;
                         } else {
                             snake.ttl = -1;
@@ -231,7 +232,8 @@ function update() {
                     if(enemy.hp == 0) {
                         if(respawns > 0) {
                             respawns--;
-                            enemy.y -= BASEHEIGHT;
+                            enemy.y -= BASEHEIGHT/2;
+                            enemy.x += rand(0,1) >= 0.5 ? BASEWIDTH: -BASEWIDTH;
                             enemy.hp = 2;
                         } else {
                             enemy.ttl = -1;

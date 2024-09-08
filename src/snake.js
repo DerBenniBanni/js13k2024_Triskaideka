@@ -82,21 +82,9 @@ function renderSnake(head) {
             setFillModeDelete();
             beginPath();
             fillStyle(COLOR_BLACK);
-            //strokeStyle(COLOR_BLACK);
             circle(x, y, currentpoint.r);
             fill();
-            //stroke();
             setFillModeFill();
-
-            // debug segment angle
-            /*
-            let v = createAngleVector(currentpoint.a+180);
-            beginPath();
-            strokeStyle('#ff0');
-            moveTo(x,y);
-            lineTo(x+v.x*currentpoint.r, y + v.y*currentpoint.r);
-            stroke();
-            /**/
             
             if(isHead && head.ot == GAMEOBJECT_TYPE_SNAKE) {
                 [[180,1],[170,2],[160,1],[150,1.5],[140,1],[130,1.2]].forEach(d => {
@@ -113,11 +101,7 @@ function renderSnake(head) {
                 });
 
             }
-            /*
-            beginPath();
-            circle(x+v.x*currentpoint.r, y + v.y*currentpoint.r, 3);
-            stroke();
-            /**/
+
             currentpoint = currentpoint.c;
             isHead = false;
             counter++;

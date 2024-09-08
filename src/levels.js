@@ -1,14 +1,15 @@
 const levels = [
     {
+        
         e:20, // enemies
-        sn:2, // snakes
-        sq:1, //squids
+        sn:4, // snakes
+        sq:3, //squids
         p: { // player modifications
             fr:0.1,
             l:3,
             y:600,
             dy:-2,
-            h:1
+            h:3
         },
         hideUpdates: true, // show upgrade-buttons?
         d:"Day 13 of the invasion, the final battle!",
