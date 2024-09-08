@@ -111,8 +111,8 @@ function update() {
             menuActionWasReleased = false;
             activeButton.c();
         }
-        let downPressed = keyActive(KEY_ACTION_DOWN);
-        let upPressed = keyActive(KEY_ACTION_UP);
+        let downPressed = keyActive(KEY_ACTION_DOWN) || getGamepadButtonPressed(GAMEPAD_DOWN) || getGamepadStickValue(STICK_LEFT_VERTICAL) > 0.3;
+        let upPressed = keyActive(KEY_ACTION_UP) || getGamepadButtonPressed(GAMEPAD_UP) || getGamepadStickValue(STICK_LEFT_VERTICAL) < -0.3;
         if(!menuDirectionWasReleased && !downPressed && !upPressed) {
             menuDirectionWasReleased = true;
         }

@@ -61,7 +61,14 @@ function updateEnemy(delta, enemy) {
     }
    
     if(enemy.hp <= 0) {
-        enemy.ttl = 0;
+        if(respawns > 0) {
+            respawns--;
+            enemy.y -= BASEHEIGHT/2;
+            enemy.x += rand(0,1) >= 0.5 ? BASEWIDTH: -BASEWIDTH;
+            enemy.hp = 2;
+        } else {
+            enemy.ttl = -1;
+        }
         explodeEnemy(enemy);
     }
 }

@@ -19,6 +19,7 @@ const STICK_RIGHT_VERTICAL = 3;
 const GAMEPAD_LEFT = 14;
 const GAMEPAD_RIGHT = 15;
 const GAMEPAD_UP = 12;
+const GAMEPAD_DOWN = 13;
 const GAMEPAD_THRUST= 7;
 
 const GAMEPAD_A = 0;

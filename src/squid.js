@@ -104,5 +104,12 @@ function updateSquid(squid, delta) {
 }
 
 function explodeSquid(squid) {
-
+    playAudio(AUDIO_SFX_EXPLOSION);
+    for(let i = 0; i < rand(20,30); i++) {
+        addGameObject(createParticleDebris(squid.x+rand(-squid.s,squid.s), squid.y+rand(-squid.s,squid.s)));
+    }
+    for(let i = 0; i < rand(8,12); i++) {
+        addGameObject(createParticleSmoke(squid.x + rand(-squid.s,squid.s), squid.y + rand(-squid.s,squid.s), rand(2,5)));
+    }
+    
 }
