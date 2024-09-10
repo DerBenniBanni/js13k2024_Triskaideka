@@ -81,7 +81,7 @@ const levels = [
         d:"Day 13 of the invasion, no end in sight",
         m:"THERE IS NO TRY!",
         success:"Hu? How did that happen?\n\nYou are not supposed to win this game... ;-)\n\nHowever: congratulations, and thanks for playing!",
-        failure:"ARGHL!\n\nThat cant be true!\nHow many of these TRISKAIDEKA is out there?!?!\nFeels like there is no end!\n\n\n\nWell. In fact: there is no happy end.\nThats the worst day in earth's history.\nYou can try again, but...\nTRISKAIDEKAPHOBIA is real.\nThere is no escape...\n\nThanks for playing ;-)\n\n\nSpecial thx to Almar and Alcore for the constructive feedback!",
+        failure:"ARGHL!\n\nThat cant be true!\nHow many of these TRISKAIDEKA are out there?!?!\nFeels like there is no end!\n\n\n\nWell. In fact: there is no happy end.\nThats the worst day in earth's history.\nYou can try again, but...\nTRISKAIDEKAPHOBIA is real.\nThere is no escape...\n\nThanks for playing ;-)\n\n\nSpecial thx to Almar and Alcore for the constructive feedback!",
         respawn:Infinity
     }
 ];

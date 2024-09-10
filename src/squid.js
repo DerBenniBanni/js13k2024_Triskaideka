@@ -80,21 +80,17 @@ function updateSquid(squid, delta) {
     if(squid.hp <= 0) {
         if(respawns > 0) {
             respawns--;
-            squid.y -= BASEHEIGHT/2;
             let xdiff = rand(0,1) >= 0.5 ? BASEWIDTH: -BASEWIDTH
-            squid.x += xdiff;
-            squid.t.forEach(t => {
-                t.y -= BASEHEIGHT/2;
-                t.x += xdiff;
-            });
-            squid.hp = 20;
-        } else {
-            squid.ttl = -1;
-            squid.t.forEach(t => {
-                t.ot = GAMEOBJECT_TYPE_SNAKE;
-                addGameObject(t);
-            });
-        }
+            addGameObject(createSquid(squid.x + xdiff, squid.y - BASEHEIGHT/4, squid.s))
+        } 
+        squid.ttl = -1;
+        squid.t.forEach(t => {
+            t.ot = GAMEOBJECT_TYPE_SNAKE;
+            t.x += rand(-squid.s, squid.s);
+            t.y += rand(-squid.s, squid.s);
+            t.a = rand(0,360);
+            addGameObject(t);
+        });
         explodeSquid(squid);
     }
 }

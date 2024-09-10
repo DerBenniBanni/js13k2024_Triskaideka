@@ -87,9 +87,17 @@ const PLAYER_MODE_ROTATIONAL = 2;
 let playerMode = PLAYER_MODE_ROTATIONAL;
 function updatePlayer(player, stick_horizontal, stick_vertical, delta) {
     player.ct -= delta;
+    let gravity = 1;
+    let maxDy = 10;
     if(player.h <= 0) {
         player.a -= 360 * delta;
         stopAudio(AUDIO_SFX_ENGINE);
+        gravity = 3;
+        maxDy = 30;
+    } else if(player.y < -PLAYER_MAX_HEIGHT+GROUND_HEIGHT) {
+        player.a += 180 * delta;
+        gravity = 5;
+        maxDy = 50;
     } else {
         let gamepadVector = getGamepadStickVector(stick_horizontal, stick_vertical);
         playerMode = gamepadVector && vectorLength(gamepadVector) > 0.2 ? PLAYER_MODE_DIRECTIONAL : PLAYER_MODE_ROTATIONAL;
@@ -136,12 +144,13 @@ function updatePlayer(player, stick_horizontal, stick_vertical, delta) {
         }
     }
 
-    if(player.dy < 5) {
-        player.dy += 1 * delta;
+    if(player.dy < maxDy) {
+        player.dy += gravity * delta;
     }
     
     player.x += player.dx;
     player.y += player.dy;
+    
     // Ground collision
     if(player.y > GROUND_HEIGHT-8) {
         if(player.dy > 0.5) {
@@ -197,6 +206,18 @@ function updatePlayer(player, stick_horizontal, stick_vertical, delta) {
     if(player.h < player.mh && SMOKE_RATE_ONE_HP * player.h < player.ls) {
         gameObjects.push(createParticleSmoke(player.x, player.y));
         player.ls = 0;
+    }
+    // wrap
+    let wrapDiffX = 0;
+    if(player.x < leftMostEnemy - WRAP_DISTANCE * 1.1) {
+        wrapDiffX = (rightMostEnemy + WRAP_DISTANCE) - player.x;
+    }
+    if(player.x > rightMostEnemy + WRAP_DISTANCE * 1.1) {
+        wrapDiffX = -(player.x - (leftMostEnemy - WRAP_DISTANCE));
+    }
+    if(wrapDiffX != 0) {
+        player.x += wrapDiffX;
+        camera.x += wrapDiffX;
     }
     // set camera target position (100 pixel ahead)
     let t = sumVectors(player, multiplyVector(v, 100));

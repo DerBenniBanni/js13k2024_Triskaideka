@@ -32,6 +32,10 @@ const msgDiv = document.querySelector('.msg');
 let currentLevel = 0;
 let upgradePoints = 0;
 
+// horizontal wrap of the playarea
+let leftMostEnemy = -BASEWIDTH;
+let rightMostEnemy = BASEWIDTH;
+const WRAP_DISTANCE = BASEWIDTH * 4;
 
 function addGameObject(gameObject) {
     gameObjects.push(gameObject);
@@ -89,6 +93,10 @@ function renderGround() {
     restoreContext();
 }
 
+function updateWrapPositions(gameObject) {
+    leftMostEnemy = gameObject.x < leftMostEnemy ? gameObject.x : leftMostEnemy;
+    rightMostEnemy = gameObject.x > rightMostEnemy ? gameObject.x : rightMostEnemy;
+}
 
 function update() {
     let delta = getDelta();
@@ -130,7 +138,8 @@ function update() {
         
     } else if(gameState == STATE_ACTION) {
         player._u(delta);
-        
+        leftMostEnemy = -BASEWIDTH;
+        rightMostEnemy = BASEWIDTH;
 
         // collisions
         let lasers = getGameObjectsByType(GAMEOBJECT_TYPE_LASER);
@@ -146,6 +155,7 @@ function update() {
         }
         if(player.alive) {
             enemies.forEach(enemy => {
+                updateWrapPositions(enemy);
                 let hit = pointDistance(enemy, player) <= enemy.r + player.cr;
                 if(hit && player.ct <= 0) {
                     player.h -= 1;
@@ -165,6 +175,7 @@ function update() {
                 }
             });
             snakes.forEach(snake => {
+                updateWrapPositions(snake);
                 let hit = pointDistance(player, snake) <= snake.r + player.cr;
                 let currentSegment = snake;
                 while(currentSegment.c && !hit) {
@@ -180,6 +191,7 @@ function update() {
                 }
             });
             squids.forEach(squid => {
+                updateWrapPositions(squids);
                 let { hit, currentSegment } = squidCollision(player,  player.cr, squid);
                 if(hit && player.ct <= 0) {
                     player.h -= 1;
@@ -334,11 +346,12 @@ function loadGameMenu() {
         addGameObject(createText(BASEWIDTH/2,500,"Controls: Keyboard Arrows/WASD and SPACE or use a gamepad (button A)", 20));
     }
 
-    let btnStartMission = addGameObject(createButton(BASEWIDTH/2,450,300,40,level.m, true, loadGameAction));
+    let upgradeDefaultActive = !level.hideUpdates && upgradePoints > 0;
+    let btnStartMission = addGameObject(createButton(BASEWIDTH/2,450,300,40,level.m, !upgradeDefaultActive, loadGameAction));
     if(!level.hideUpdates) {
         let textUpgradePoints = addGameObject(createText(BASEWIDTH/2,530,"Available scrap for upgrades: 0", 30));
         textUpgradePoints._u = (delta) => textUpgradePoints.t = "Available scrap for upgrades: "+upgradePoints;
-        let btnUpgradeLaser = addGameObject(createButton(BASEWIDTH/2,570,350,40,"ADD LASERS", false, upgradeLaser));
+        let btnUpgradeLaser = addGameObject(createButton(BASEWIDTH/2,570,350,40,"ADD LASERS", upgradeDefaultActive, upgradeLaser));
         btnUpgradeLaser._u = (delta) => {btnUpgradeLaser.t = "UPGRADE LASER (" + (gameData[GAMEDATA_SHIP_WEAPON] == shipWeaponMaxValue ? "MAX" : gameData[GAMEDATA_SHIP_WEAPON]) + ")"}
         let btnUpgradeFireRate = addGameObject(createButton(BASEWIDTH/2,620,350,40,"ENHANCE FIRE RATE", false, upgradeFireRate));
         btnUpgradeFireRate._u = (delta) => {btnUpgradeFireRate.t = "ENHANCE FIRE RATE (" + (gameData[GAMEDATA_SHIP_FIRERATE] == shipFirerateMaxValue ? "MAX" : gameData[GAMEDATA_SHIP_FIRERATE]) + ")"}
@@ -400,7 +413,7 @@ function loadGameAction() {
     for(let i = 0; i < level.sn; i++) {
         let x = player.x + (randInt(0,1) == 0 ? -1 : 1)*(200 + rand(0, BASEWIDTH))
         let y = player.y - rand(0, BASEHEIGHT);
-        addGameObject(createSnake(x, y, randInt(13,33), randInt(13,33), rand(20,40)));
+        addGameObject(createSnake(x, y, randInt(13,33), randInt(13,33), rand(100,180)));
     }
 
 
