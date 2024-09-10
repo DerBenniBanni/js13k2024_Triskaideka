@@ -50,9 +50,7 @@ function render() {
     gameObjects
         .filter(gameObject=>gameObject._r)
         .forEach(gameObject => gameObject._r());
-    if(gameState == STATE_MENU) {
-
-    } else if(gameState == STATE_ACTION) {
+    if(gameState == STATE_ACTION) {
         player._r();
         renderGround();
         let [groundX,groundY] = getCameraView({x:0, y:GROUND_HEIGHT});
@@ -66,6 +64,9 @@ function render() {
             ctx.drawImage(waterCanvas.c, 0, groundY, BASEWIDTH, BASEHEIGHT/3);
             ctx.globalAlpha = 1;
         }
+        drawHUD();
+    } else if(gameState == STATE_MENU) {
+        // if there are special effects in menu...
     }
 }
 
@@ -328,6 +329,9 @@ function loadGameMenu() {
 
     if(level.d) {
         addGameObject(createText(BASEWIDTH/2,370,level.d));
+    }
+    if(currentLevel == 0) {
+        addGameObject(createText(BASEWIDTH/2,500,"Controls: Keyboard Arrows/WASD and SPACE or use a gamepad (button A)", 20));
     }
 
     let btnStartMission = addGameObject(createButton(BASEWIDTH/2,450,300,40,level.m, true, loadGameAction));

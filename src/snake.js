@@ -57,11 +57,7 @@ function updateSnake(head, delta, speed) {
 
 function renderSnake(head) {
     if(!isInView(head, head.r)) {
-        let p = getStandardVector(pointDifferenceVector(player, head), 350);
-        fillStyle('#f00a');
-        beginPath();
-        circle(BASEWIDTH/2 + p.x, BASEHEIGHT/2 + p.y, 7);
-        fill();
+        renderHudMarker(head, 3);
     }
     let tail = head;
     while(tail.c) {
@@ -95,9 +91,10 @@ function renderSnake(head) {
             pointsLeft.unshift(calculateCirclePointAtAngle(x,y,currentpoint,90));
             pointsRight.push(calculateCirclePointAtAngle(x,y,currentpoint,-90));
             if(counter % 2 == 0 ) {
-                [[70,1.5],[70,1]].forEach(d=>{
-                    pointsLeft.unshift(calculateCirclePointAtAngle(x,y,currentpoint,d[0],d[1]));
-                    pointsRight.push(calculateCirclePointAtAngle(x,y,currentpoint,-d[0],d[1]));
+                let factor = counter == 2 && head.ot == GAMEOBJECT_TYPE_SNAKE ? 2 : 1;
+                [[70,1.5],[65,1.1]].forEach(d=>{
+                    pointsLeft.unshift(calculateCirclePointAtAngle(x,y,currentpoint,d[0],d[1]*factor));
+                    pointsRight.push(calculateCirclePointAtAngle(x,y,currentpoint,-d[0],d[1]*factor));
                 });
 
             }

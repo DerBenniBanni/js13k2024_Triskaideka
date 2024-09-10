@@ -168,13 +168,13 @@ function renderParticleLaser(particle) {
 
 function renderParticleEnemyBullet(particle) {
     let alpha = 1;
-    if(particle.ttl < 1) {
-        alpha = particle.ttl;
+    if(particle.ttl < 0.5) {
+        alpha = particle.ttl * 2;
     }
     if(alpha < 0) {
         alpha= 0;
     }
-    fillStyle('rgba(255,255,255,'+alpha+')');
+    fillStyle('rgba(255,190,0,'+alpha+')');
     [0,1,2].forEach(offset => {
         beginPath();
         circle(-5*offset*particle.v.x, -5*offset*particle.v.y, particle.r-offset*1.5);
@@ -184,7 +184,7 @@ function renderParticleEnemyBullet(particle) {
     fillStyle('#fff');
     [0,1,2 ].forEach(offset => {
         beginPath();
-        circle(-5*offset*particle.v.x, -5*offset*particle.v.y, particle.r-offset*1.5 - 1);
+        circle(-5*offset*particle.v.x, -5*offset*particle.v.y, particle.r-offset*1.5 - 2);
         fill(); 
     });
     setFillModeFill();

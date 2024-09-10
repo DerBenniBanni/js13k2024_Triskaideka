@@ -1,4 +1,5 @@
 const SMOKE_RATE_ONE_HP = 0.1;
+const PLAYER_MAX_HEIGHT = BASEHEIGHT * 8;
 function createPlayer(x,y,rotationAngle) {
     let player = {
         // position
@@ -153,6 +154,7 @@ function updatePlayer(player, stick_horizontal, stick_vertical, delta) {
         player.dx = 0;
         if(player.h <= 0 && player.alive) {
             player.alive = false;
+            playAudio(AUDIO_SFX_EXPLOSION);
             addGameObject(createParticleExplosion(player.x, player.y,COLOR_RGB_YELLOW));
             for(let i = 0; i < 40; i++) {
                 addGameObject(createParticleDebris(player.x, player.y, 3, -300));

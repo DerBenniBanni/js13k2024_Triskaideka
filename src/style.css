@@ -14,6 +14,7 @@ canvas {
 	top: 0;
 	left: 0;
 	object-fit: contain;
+	cursor:not-allowed;
 }
 #bg {
 	width:100vw;
@@ -35,6 +36,9 @@ canvas {
 .bg1 {
 	background: linear-gradient(0deg, #07a 0%, #118 30%, #314 61%, #002 100%);
 }
+.bg2 {
+	background: linear-gradient(0deg, rgb(189, 113, 0) 0%, rgb(158, 19, 9) 30%, rgb(0, 15, 221) 61%, #002 100%);
+}
 .hidden {
 	display:none;
 }
@@ -51,11 +55,12 @@ canvas {
 	color:rgb(218, 240, 255);
 	border: 3px solid #adf;
 	border-radius: 20px;;
-	font: bold 'Courier New', Courier, monospace;
+	font-family: sans-serif;
+	font-weight:bold;
 	font-size:3vh;
 	padding:10px;
 	text-align: center;
-	cursor:pointer;
+	cursor:default;
 	text-shadow:3px 3px 3px #000;
 	box-shadow: 0 0 20px 5px #8af, inset 0 0 10px 2px #8af;
 }

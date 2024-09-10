@@ -30,11 +30,7 @@ function createTentacle(x,y,size,segments, minAngle, maxAngle) {
 
 function renderSquid(squid) {
     if(!isInView(squid, squid.s)) {
-        let p = getStandardVector(pointDifferenceVector(player, squid), 350);
-        fillStyle('#f00a');
-        beginPath();
-        circle(BASEWIDTH/2 + p.x, BASEHEIGHT/2 + p.y, 10);
-        fill();
+        renderHudMarker(squid,4);
     }
     if(isInView(squid, squid.s*2)) {
         saveContext();

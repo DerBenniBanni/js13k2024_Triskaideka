@@ -45,6 +45,7 @@ const paths = {
             'src/sfx_hit.js',
             'src/sfx_engine.js',
             'src/triskaideka.js',
+            'src/hud.js',
             'src/menu.js',
             'src/levels.js',
             'src/game.js',
