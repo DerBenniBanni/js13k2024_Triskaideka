@@ -37,7 +37,10 @@ canvas {
 	background: linear-gradient(0deg, #07a 0%, #118 30%, #314 61%, #002 100%);
 }
 .bg2 {
-	background: linear-gradient(0deg, rgb(189, 113, 0) 0%, rgb(158, 19, 9) 30%, rgb(0, 15, 221) 61%, #002 100%);
+	background: linear-gradient(180deg, #002 0%, #482a79 40%,#5551df 60%,#462692 100%);
+}
+.bg3 {
+	background: linear-gradient(180deg, #002 0%, #163C52 30%,#4F4F47 50%,#C5752D 80%,#B7490F 95%, #2F1107 100%);
 }
 .hidden {
 	display:none;

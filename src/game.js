@@ -29,8 +29,17 @@ gameData[GAMEDATA_SHIP_WEAPON] = 1;
 gameData[GAMEDATA_SHIP_FIRERATE] = 1;
 
 const msgDiv = document.querySelector('.msg');
+const sky = document.querySelector('#sky');
 let currentLevel = 0;
 let upgradePoints = 0;
+
+// mouse warning
+let noMouseText = null;
+document.addEventListener("click",()=>{
+    if(noMouseText == null && gameState == STATE_MENU && currentLevel == 0) {
+        noMouseText = addGameObject(createText(BASEWIDTH/2,BASEHEIGHT*0.7,"Please, use the keyboard or a gamepad, not the mouse or touch.",40));
+    }
+});
 
 // horizontal wrap of the playarea
 let leftMostEnemy = -BASEWIDTH;
@@ -220,8 +229,8 @@ function update() {
                         addGameObject(createParticleDebris(laser.x, laser.y));
                     }
                     playAudio(AUDIO_SFX_HIT);
-                    if(snake.hp == 0) {
-                        if(respawns > 0) {
+                    if(snake.hp <= 0) {
+                        if(respawns > 0 && !snake.tt) {
                             respawns--;
                             snake.y -= BASEHEIGHT/2;
                             snake.x += rand(0,1) >= 0.5 ? BASEWIDTH: -BASEWIDTH;
@@ -242,7 +251,7 @@ function update() {
                         addGameObject(createParticleDebris(laser.x, laser.y));
                     }
                     playAudio(AUDIO_SFX_HIT);
-                    if(enemy.hp == 0) {
+                    if(enemy.hp <= 0) {
                         if(respawns > 0) {
                             respawns--;
                             enemy.y -= BASEHEIGHT/2;
@@ -344,6 +353,9 @@ function loadGameMenu() {
     }
     if(currentLevel == 0) {
         addGameObject(createText(BASEWIDTH/2,500,"Controls: Keyboard Arrows/WASD and SPACE or use a gamepad (button A)", 20));
+        sky.className = "bg1";
+    } else {
+        sky.className = "bg"+randInt(1,3);
     }
 
     let upgradeDefaultActive = !level.hideUpdates && upgradePoints > 0;
@@ -403,24 +415,37 @@ function loadGameAction() {
         addGameObject(createParticleDust(rand(0, BASEWIDTH),rand(0, BASEHEIGHT)));
     }
 
-    for(let i = 0; i < level.e; i++) {
-        let wing = getRandomEntry([ENEMY_WING_A, ENEMY_WING_B, ENEMY_WING_C, ENEMY_WING_D, ENEMY_WING_E]);
-        let hull = getRandomEntry([ENEMY_HULL_A, ENEMY_HULL_B, ENEMY_HULL_C]);
-        let cockpit = getRandomEntry([ENEMY_COCKPIT_A, ENEMY_COCKPIT_B, ENEMY_COCKPIT_C]);
-        addGameObject(createEnemy(rand(-BASEWIDTH, BASEWIDTH*2), rand(-BASEHEIGHT*2,0),[wing, hull, cockpit]));
+    if(level.e) {
+        for(let i = 0; i < level.e; i++) {
+            let wing = getRandomEntry([ENEMY_WING_A, ENEMY_WING_B, ENEMY_WING_C, ENEMY_WING_D, ENEMY_WING_E]);
+            let hull = getRandomEntry([ENEMY_HULL_A, ENEMY_HULL_B, ENEMY_HULL_C]);
+            let cockpit = getRandomEntry([ENEMY_COCKPIT_A, ENEMY_COCKPIT_B, ENEMY_COCKPIT_C]);
+            addGameObject(createEnemy(rand(-BASEWIDTH, BASEWIDTH*2), rand(-BASEHEIGHT*2,0),[wing, hull, cockpit]));
+        }
     }
 
-    for(let i = 0; i < level.sn; i++) {
-        let x = player.x + (randInt(0,1) == 0 ? -1 : 1)*(200 + rand(0, BASEWIDTH))
-        let y = player.y - rand(0, BASEHEIGHT);
-        addGameObject(createSnake(x, y, randInt(13,33), randInt(13,33), rand(100,180)));
+    if(level.sn) {
+        for(let i = 0; i < level.sn; i++) {
+            let x = player.x + (randInt(0,1) == 0 ? -1 : 1)*(200 + rand(0, BASEWIDTH))
+            let y = player.y - rand(0, BASEHEIGHT);
+            addGameObject(createSnake(x, y, randInt(13,33), randInt(13,33), rand(100,180)));
+        }
     }
 
+    if(level.sq) {
+        for(let i = 0; i < level.sq; i++) {
+            let x = player.x + (randInt(0,1) == 0 ? -1 : 1)*(300 + rand(0, BASEWIDTH))
+            let y = player.y - rand(0, BASEHEIGHT);
+            addGameObject(createSquid(x, y, rand(60,100)));
+        }
+    }
 
-    for(let i = 0; i < level.sq; i++) {
-        let x = player.x + (randInt(0,1) == 0 ? -1 : 1)*(300 + rand(0, BASEWIDTH))
-        let y = player.y - rand(0, BASEHEIGHT);
-        addGameObject(createSquid(x, y, rand(60,100)));
+    if(level.sqr) {
+        for(let i = 0; i < level.sqr; i++) {
+            let x = player.x + (randInt(0,1) == 0 ? -1 : 1)*(300 + rand(0, BASEWIDTH))
+            let y = player.y - rand(0, BASEHEIGHT);
+            addGameObject(createSquid(x, y, rand(60,100),SQUID_TYPE_ROTATING));
+        }
     }
     /*
     [ENEMY_WING_A, ENEMY_WING_B, ENEMY_WING_C, ENEMY_WING_D, ENEMY_WING_E].forEach((wing,i) => {

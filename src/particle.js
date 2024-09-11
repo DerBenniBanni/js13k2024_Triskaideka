@@ -125,11 +125,17 @@ function updateParticleExplosion(particle, delta) {
 }
 
 function createParticleDebris(x,y, xMultiplyer = 1, yModifier = 0) {
-    let particle = createParticle(x, y, rand(-50,50) * xMultiplyer, rand(-150,10) + yModifier, 2, renderParticleDust, updateParticleHitGroundSplash);
+    let particle = createParticle(x, y, rand(-100,100) * xMultiplyer, rand(-150,10) + yModifier, 2, renderParticleDebris, updateParticleDebris);
     particle.a = rand(0,360);
+    particle.ad = rand(-860,860);
     particle.g = 500;
     particle.l = rand(3,6);
     return particle;
+}
+
+function updateParticleDebris(particle, delta) {
+    particle.a += particle.ad * delta;
+    updateParticleHitGroundSplash(particle, delta);
 }
 
 function renderParticleSmoke(particle) {
@@ -194,6 +200,15 @@ function renderParticleDust(particle) {
     rotateContext(particle.a);
     beginPath();
     strokeStyle('#fffa');
+    moveTo(-particle.l,0);
+    lineTo(particle.l,0);
+    stroke();
+}
+function renderParticleDebris(particle) {
+    rotateContext(particle.a);
+    beginPath();
+    strokeStyle('#fff7');
+    ctx.lineWidth = 2;
     moveTo(-particle.l,0);
     lineTo(particle.l,0);
     stroke();

@@ -105,7 +105,7 @@ function updatePlayer(player, stick_horizontal, stick_vertical, delta) {
         
             let targetAngle = getVectorAngleDegrees(gamepadVector)+360;
             let diffAngle = (targetAngle - player.a  + 180) % 360 - 180;
-            let turnspeed = 360; // angel per second
+            let turnspeed = 360; // angle per second
             let maxTurn = turnspeed * delta;
             if(diffAngle < 0) {
                 player.a += diffAngle < -maxTurn ? -maxTurn : diffAngle;

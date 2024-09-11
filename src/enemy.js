@@ -39,7 +39,7 @@ function updateEnemy(delta, enemy) {
     let targetAngle = getVectorAngleDegrees(targetVector) + 720;
     let headAngle = enemy.a-180;
     let diffAngle = (targetAngle - headAngle + 180) % 360 - 180;
-    let turnspeed = enemy.s; // angel per second
+    let turnspeed = enemy.s; // angle per second
     let maxTurn = turnspeed * delta;
     if(diffAngle < 0) {
         enemy.a -= maxTurn;
@@ -106,9 +106,9 @@ function createEnemyImage(enemy) {
         if(close) {
             lineTo(points[0], points[1]);
         }
-        //setFillModeDelete();
+        setFillModeDelete();
         fill();
-        //setFillModeFill();
+        setFillModeFill();
         stroke();
     });
     restoreContext();

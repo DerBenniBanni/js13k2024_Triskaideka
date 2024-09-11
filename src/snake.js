@@ -4,10 +4,11 @@ function createSnake(x, y, headsize, segments, speed, ot = GAMEOBJECT_TYPE_SNAKE
     headPoint.ot = ot;
     headPoint.ma = 25; // max Angle for Segments
     headPoint.hp = 10;
+    headPoint.s = speed;
     headPoint._r = () => renderSnake(headPoint);
     // gamepad control? 
     // headPoint._u = (delta) => updateSnake(headPoint, STICK_RIGHT_HORIZONTAL, STICK_RIGHT_VERTICAL, delta);
-    headPoint._u = (delta) => updateSnake(headPoint, delta, speed || 50);
+    headPoint._u = (delta) => updateSnake(headPoint, delta);
     let currentpoint = headPoint;
     for(let i = 1; i <= segments; i++) {
         let size = headsize - i*(headsize/segments);
@@ -23,7 +24,7 @@ function createSnakeSegment(x, y, radius) {
     return segment;
 }
 
-function updateSnake(head, delta, speed) {
+function updateSnake(head, delta) {
     if(head.ot == GAMEOBJECT_TYPE_SNAKE) {
         let targetPoint = createPoint(player.x, player.y);
         let targetVector = pointDifferenceVector(head, targetPoint);
@@ -32,7 +33,7 @@ function updateSnake(head, delta, speed) {
         if(head.inited) {
             let headAngle = head.a-180;
             let diffAngle = (targetAngle - headAngle + 180) % 360 - 180;
-            let turnspeed = speed; // angel per second
+            let turnspeed = head.s; // angle per second == speed
             let maxTurn = turnspeed * delta;
             if(diffAngle < 0) {
                 head.a -= maxTurn;
@@ -46,7 +47,7 @@ function updateSnake(head, delta, speed) {
         // normalize angle
         head.a = normalizeAngle(head.a);
 
-        let targetStandardVector = createAngleVector(head.a-180, speed * delta); 
+        let targetStandardVector = createAngleVector(head.a-180, head.s * delta); 
         head.x += targetStandardVector.x;
         head.y += targetStandardVector.y;
     }
@@ -56,7 +57,7 @@ function updateSnake(head, delta, speed) {
 
 
 function renderSnake(head) {
-    if(!isInView(head, head.r)) {
+    if(!isInView(head, head.r) && !head.sq) {
         renderHudMarker(head, 3);
     }
     let tail = head;

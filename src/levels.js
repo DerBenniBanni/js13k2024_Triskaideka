@@ -3,6 +3,7 @@ const levels = [
         e:20, // enemies
         sn:4, // jabberwockies
         sq:3, //squids
+        sqr:1, // starfishs
         p: { // player modifications
             fr:0.1,
             l:3,
@@ -39,7 +40,7 @@ const levels = [
     {
         e:10,
         sn:2,
-        d:"Day 5 of the invasion, what's that? Jabberwockies?",
+        d:"Day 4 of the invasion, what's that? Jabberwockies?",
         m:"EAT THAT, JABBERWOCK!",
         success:"Jabberwockies?!?! Well, they didn't like my lasers.\n\nLet's see what they come up with next...",
         failure:"AH!!! I hate Jabberwockies!\n\nWhere is my repair-hammer?\n\nAh! Here! Ok, just some taps here and there will do the trick.\n\n*BANG* ... *BOINK*\n\nAs good as new! Here we go again...",
@@ -48,7 +49,7 @@ const levels = [
     {
         e:15,
         sn:4,
-        d:"Day 7 of the invasion, they keep coming",
+        d:"Day 5 of the invasion, they keep coming",
         m:"FREEDOM!",
         success:"Ok, how creative. They just keep sending more Jabberwockies.\n\nWell, i've sent them more rounds of laser-bolts in return.\n\nBRING IT ON!",
         failure:"Oh boy, do i hate these Jabberwockies...\n\nLets try again!",
@@ -58,16 +59,26 @@ const levels = [
         e:10,
         sn:2,
         sq:1,
-        d:"Day 8 of the invasion, dawn of the squids. WHAT?!?! SQUIDS?!?! AAAAHHH!!!",
+        d:"Day 7 of the invasion, dawn of the squids. WHAT?!?! SQUIDS?!?! AAAAHHH!!!",
         m:"FOR FRODO!",
         success:"Squids.\n\nThat was a surprise.\nEspecially that they split into jabberwockies.\n\nBut still: no match for my A.I.R.W.O.L.F., ha!",
         failure:"Squids?!?! What the heck? They took me by surprise. Let's check them out again!",
         respawn:20
     },
     {
+        e:5,
+        sqr:2,
+        d:"Day 9 of the invasion, starfishs. Rotating STARFISHS? *gulp*",
+        m:"SAVE BIKINI BOTTOM!",
+        success:"Ok. That problem is solved.\n\nFortunately, these starfishs are allergic against lasers.\n\nNEXT!",
+        failure:"Oh my mighty flying spaghetti monster!\n\n So many rotating tentacles.\n\nOuch!\n\nHurry, the rocket needs to start again!",
+        respawn:20
+    },
+    {
         e:20,
         sn:4,
         sq:2,
+        sqr:1,
         d:"Day 10 of the invasion, will there be an end?",
         m:"GO GO GO GO!",
         success:"Ok, they doubled their attacking crafts and... creatures.\n\nSo, i should also increase my firepower.\nLet's search the crashed aliens for upgrades...",
@@ -75,13 +86,14 @@ const levels = [
         respawn:25
     },
     {
-        e:30,
+        e:20,
         sn:5,
         sq:3,
+        sq:2,
         d:"Day 13 of the invasion, no end in sight",
         m:"THERE IS NO TRY!",
         success:"Hu? How did that happen?\n\nYou are not supposed to win this game... ;-)\n\nHowever: congratulations, and thanks for playing!",
-        failure:"ARGHL!\n\nThat cant be true!\nHow many of these TRISKAIDEKA are out there?!?!\nFeels like there is no end!\n\n\n\nWell. In fact: there is no happy end.\nThats the worst day in earth's history.\nYou can try again, but...\nTRISKAIDEKAPHOBIA is real.\nThere is no escape...\n\nThanks for playing ;-)\n\n\nSpecial thx to Almar and Alcore for the constructive feedback!",
+        failure:"ARGHL!\n\nThat cant be true!\nHow many of these TRISKAIDEKA are out there?!?!\nFeels like there is no end!\n\n\n\nWell. In fact: there is no happy end.\nThats the worst day in earth's history.\nYou can try again, but...\nTRISKAIDEKAPHOBIA is real.\nThere is no escape...\n\nThanks for playing ;-)\n\n\n\nSpecial thx to Almar and Alcore for the constructive feedback!",
         respawn:Infinity
     }
 ];
