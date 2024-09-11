@@ -5,7 +5,7 @@ const BASEHEIGHT = 900;
 
 const COLOR_WHITE = '#fff';
 const COLOR_BLACK = '#000';
-COLOR_RGB_YELLOW = '255,255,0';
+const COLOR_RGB_YELLOW = '255,255,0';
 
 //Math-related shortcuts
 const PI = Math.PI;
