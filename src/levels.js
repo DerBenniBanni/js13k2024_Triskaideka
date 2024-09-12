@@ -9,7 +9,7 @@ const levels = [
             l:3,
             y:600,
             dy:-2,
-            h:4
+            h:1//4
         },
         hideUpdates: true, // show upgrade-buttons?
         d:"Day 13 of the invasion, the final battle!",
@@ -89,11 +89,12 @@ const levels = [
         e:20,
         sn:5,
         sq:3,
-        sq:2,
+        sqr:2,
         d:"Day 13 of the invasion, no end in sight",
         m:"THERE IS NO TRY!",
         success:"Hu? How did that happen?\n\nYou are not supposed to win this game... ;-)\n\nHowever: congratulations, and thanks for playing!",
-        failure:"ARGHL!\n\nThat cant be true!\nHow many of these TRISKAIDEKA are out there?!?!\nFeels like there is no end!\n\n\n\nWell. In fact: there is no happy end.\nThats the worst day in earth's history.\nYou can try again, but...\nTRISKAIDEKAPHOBIA is real.\nThere is no escape...\n\nThanks for playing ;-)\n\n\n\nSpecial thx to Almar and Alcore for the constructive feedback!",
-        respawn:Infinity
+        failure:"ARGHL!\n\nThat cant be true!\nHow many of these TRISKAIDEKA are out there?!?!\nFeels like there is no end of this TRISKAIDEKAGEDDON!\n\n\nWell. In fact: there is no happy end.\nThats the worst day in earth's history.\nYou can try again, but...\nTRISKAIDEKAPHOBIA is real.\nThere is no escape...\n\nThanks for playing ;-)\n\n\nSpecial thx to Almar and Alcore for the constructive feedback!",
+        respawn:Infinity,
+        count:true
     }
 ];

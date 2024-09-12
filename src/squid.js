@@ -1,5 +1,5 @@
-const SQUID_TYPE_NORMAL = 1;
-const SQUID_TYPE_ROTATING = 2;
+const SQUID_TYPE_NORMAL = 8;
+const SQUID_TYPE_ROTATING = 9;
 
 function createSquid(x,y, size, type = SQUID_TYPE_NORMAL) {
     let squid = {
@@ -137,5 +137,5 @@ function explodeSquid(squid) {
     for(let i = 0; i < rand(8,12); i++) {
         addGameObject(createParticleSmoke(squid.x + rand(-squid.s,squid.s), squid.y + rand(-squid.s,squid.s), rand(2,5)));
     }
-    
+    countKill(squid.st);
 }

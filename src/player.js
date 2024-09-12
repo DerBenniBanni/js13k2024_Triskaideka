@@ -169,7 +169,11 @@ function updatePlayer(player, stick_horizontal, stick_vertical, delta) {
                 addGameObject(createParticleDebris(player.x, player.y, 3, -300));
             }
             msgDiv.classList.remove('hidden');
-            msgDiv.innerText = levels[currentLevel].failure;
+            let text = levels[currentLevel].failure;
+            if(levels[currentLevel].count) {
+                text +="\n\nScore Details: " + killCount.e + " scouts, " + killCount.sn + " jabberwockies, " + killCount.sq + " squids and " + killCount.sqr + " starfishs."
+            }
+            msgDiv.innerText = text;
             player.lf = -2;
         }
     }

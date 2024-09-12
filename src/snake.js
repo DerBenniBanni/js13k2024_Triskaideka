@@ -156,6 +156,7 @@ function explodeSnake(head) {
         }
         currentpoint = currentpoint.c;
     }
+    countKill(GAMEOBJECT_TYPE_SNAKE);
 }
 
 /* GAMEPAD controlled snake...?

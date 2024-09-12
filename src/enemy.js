@@ -78,6 +78,7 @@ function explodeEnemy(enemy) {
     for(let i = 0; i < rand(3,7); i++) {
         addGameObject(createParticleDebris(enemy.x+rand(-enemy.r,enemy.r), enemy.y+rand(-enemy.r,enemy.r)));
     }
+    countKill(GAMEOBJECT_TYPE_ENEMY);
 }
 
 function createEnemyImage(enemy) {

@@ -16,14 +16,12 @@ let gameObjects = [];
 let gameState = STATE_MENU;
 
 
-const GAMEDATA_POINTS = 0;
-const GAMEDATA_XP = 1;
-const GAMEDATA_SHIP_WEAPON = 2;
+const GAMEDATA_XP = 0;
+const GAMEDATA_SHIP_WEAPON = 1;
 const shipWeaponMaxValue = 3;
-const GAMEDATA_SHIP_FIRERATE = 3;
+const GAMEDATA_SHIP_FIRERATE = 2;
 const shipFirerateMaxValue = 5; // shots per second
-const gameData = {}
-gameData[GAMEDATA_POINTS] = 0;
+const gameData = [];
 gameData[GAMEDATA_XP] = 0;
 gameData[GAMEDATA_SHIP_WEAPON] = 1;
 gameData[GAMEDATA_SHIP_FIRERATE] = 1;
@@ -33,11 +31,49 @@ const sky = document.querySelector('#sky');
 let currentLevel = 0;
 let upgradePoints = 0;
 
+const killCount = {
+    e:0,
+    sn:0,
+    sq:0,
+    sqr:0,
+    p:0
+}
+
+function resetKillCount() {
+    killCount.e = 0;
+    killCount.sn = 0;
+    killCount.sq = 0;
+    killCount.sqr = 0;
+    killCount.p = 0;
+}
+
+function countKill(what) {
+    switch(what) {
+        case GAMEOBJECT_TYPE_ENEMY:
+            killCount.e++;
+            killCount.p += 3;
+            break;
+        case GAMEOBJECT_TYPE_SNAKE:
+            killCount.sn++;
+            killCount.p += 7;
+            break;
+        case SQUID_TYPE_NORMAL:
+            killCount.sq++;
+            killCount.p += 13;
+            break;
+        case SQUID_TYPE_ROTATING:
+            killCount.sqr++;
+            killCount.p += 17;
+            break;
+        default:
+    }
+}
+
 // mouse warning
 let noMouseText = null;
 document.addEventListener("click",()=>{
     if(noMouseText == null && gameState == STATE_MENU && currentLevel == 0) {
-        noMouseText = addGameObject(createText(BASEWIDTH/2,BASEHEIGHT*0.7,"Please, use the keyboard or a gamepad, not the mouse or touch.",40));
+        noMouseText = addGameObject(createText(BASEWIDTH/2,410,"Please, use the keyboard or a gamepad, not the mouse or touch.",30));
     }
 });
 
@@ -159,8 +195,12 @@ function update() {
         if(!player.won && snakes.length + enemies.length + squids.length == 0) {
             player.lf = -2;
             msgDiv.classList.remove('hidden');
-            msgDiv.innerText = levels[currentLevel].success;
-            player.won = true;;
+            let text = levels[currentLevel].success;
+            if(levels[currentLevel].count) {
+                text +="\n\nScore Details: " + killCount.e + " scouts, " + killCount.sn + " jabberwockies, " + killCount.sq + " squids and " + killCount.sqr + " starfishs."
+            }
+            msgDiv.innerText = text;
+            player.won = true;
         }
         if(player.alive) {
             enemies.forEach(enemy => {
@@ -360,7 +400,7 @@ function loadGameMenu() {
 
     let upgradeDefaultActive = !level.hideUpdates && upgradePoints > 0;
     let btnStartMission = addGameObject(createButton(BASEWIDTH/2,450,300,40,level.m, !upgradeDefaultActive, loadGameAction));
-    if(!level.hideUpdates) {
+    if(!level.hideUpdates || true) {
         let textUpgradePoints = addGameObject(createText(BASEWIDTH/2,530,"Available scrap for upgrades: 0", 30));
         textUpgradePoints._u = (delta) => textUpgradePoints.t = "Available scrap for upgrades: "+upgradePoints;
         let btnUpgradeLaser = addGameObject(createButton(BASEWIDTH/2,570,350,40,"ADD LASERS", upgradeDefaultActive, upgradeLaser));
@@ -369,6 +409,16 @@ function loadGameMenu() {
         btnUpgradeFireRate._u = (delta) => {btnUpgradeFireRate.t = "ENHANCE FIRE RATE (" + (gameData[GAMEDATA_SHIP_FIRERATE] == shipFirerateMaxValue ? "MAX" : gameData[GAMEDATA_SHIP_FIRERATE]) + ")"}
         linkButtons(btnStartMission, btnUpgradeLaser, DIRECTION_DOWN);
         linkButtons(btnUpgradeLaser, btnUpgradeFireRate, DIRECTION_DOWN);
+
+        if(!storySkipped) {
+            let btnSkipStory = addGameObject(createButton(BASEWIDTH/2,730,550,30,"pause the story - release the whole TRISKAIDEKA fleet", false, skipStory));
+            btnSkipStory.ts = 18;
+            linkButtons(btnUpgradeFireRate, btnSkipStory, DIRECTION_DOWN);
+        } else { 
+            let btnReturnStory = addGameObject(createButton(BASEWIDTH/2,730,550,30,"return to the story - where you left", false, returnToStory));
+            btnReturnStory.ts = 18;
+            linkButtons(btnUpgradeFireRate, btnReturnStory, DIRECTION_DOWN);
+        }
     }
 
     addGameObject(createText(BASEWIDTH/2,BASEHEIGHT-40,"A 13 kilobyte game by DerBenniBanni (Github / itch.io / X) for the 2024 js13kgames.com gamejam", 20));
@@ -379,7 +429,27 @@ function loadGameMenu() {
     }
 
 }
-
+let storySkipped = false;
+let savedGameData = [];
+let savedLevel = 0;
+function skipStory() {
+    storySkipped = true;
+    savedGameData = [];
+    gameData.forEach((value) => savedGameData.push(value));
+    savedLevel = currentLevel;
+    currentLevel = levels.length - 1;
+    gameData[GAMEDATA_SHIP_FIRERATE] = shipFirerateMaxValue;
+    gameData[GAMEDATA_SHIP_WEAPON] = shipWeaponMaxValue;
+    gameData[GAMEDATA_XP] = 0;
+    loadGameMenu();
+}
+function returnToStory() {
+    storySkipped = false;
+    gameData.length = 0;
+    savedGameData.forEach((value) => gameData.push(value));
+    currentLevel = savedLevel;
+    loadGameMenu();
+}
 function upgradeLaser() {
     if(upgradePoints > 0 && gameData[GAMEDATA_SHIP_WEAPON] < shipWeaponMaxValue) {
         gameData[GAMEDATA_SHIP_WEAPON] += 1;
@@ -401,6 +471,7 @@ let respawns = 0;
 function loadGameAction() {
     msgDiv.classList.add('hidden');
     let level = levels[currentLevel];
+    resetKillCount();
     respawns = level.respawn ? level.respawn : 0;
     msgDiv.innerText = level.success;
     clearObjects();

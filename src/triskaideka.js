@@ -5,7 +5,7 @@ let triskaidekaOriginY = 0;
 function createTriskaideka(x,y,size = 1) {
     let tris = {x:x, y:y, s:size, ttl:Infinity};
     tris._r = () => renderTriskaideka(tris);
-    tris._u = (delta) => {tris.s = size + sin(gameTime) * 0.05;}
+    tris._u = (delta) => {tris.s = size + sin(gameTime) * 0.05 + 0.05;}
     return tris;
 }
 function renderTriskaideka(tris) {

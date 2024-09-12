@@ -38,7 +38,8 @@ function renderButton(btn) {
     }
     rect(0,0,btn.w, btn.h);
     fillStyle(COLOR_WHITE);
-    ctx.font = '24px sans-serif';
+    let ts = btn.ts || 24;
+    ctx.font = ts + 'px sans-serif';
     ctx.textAlign = "center";
     ctx.textBaseline  = "middle";
     ctx.fillText(btn.t, btn.w/2, btn.h/2);
