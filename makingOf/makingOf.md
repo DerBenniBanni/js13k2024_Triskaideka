@@ -31,7 +31,7 @@ I wanted to add a procedurally generated creature, so i played a bit with a bunc
 So i came up with the idea, that one circle should follow the previous one in a defines distance, and only the first is controlled by keyboard.
 ![basic snake with circles](img/snake_01.png)
 
-So the position of the "head" of the "snake" was now directly updated (each frame) depending on keyboard-inputs and the segments of the tail were updated to move in the directon of the previous segment until the desired distance is reached (essentiall i calculation the vector between the two midpoints of the segment, then clamping that vector to the distance of the segment and setting the child-segment to this new position). This looked pretty organic.
+So the position of the "head" of the "snake" was now directly updated (each frame) depending on keyboard-inputs and the segments of the tail were updated to move in the directon of the previous segment until the desired distance is reached (essentially a calculation of the vector between the two midpoints of the segments, then clamping that vector to the distance of the segment and setting the child-segments x/y to this new position). This looked pretty organic in movement.
 
 Then i added a hull for the creature by calculation the 90° positions left and right and connecting them by an outline.
 
@@ -42,7 +42,7 @@ Then i added a hull for the creature by calculation the 90° positions left and 
 
 At this stage i added gamepad-support for the player character, which was quite easy using the Gamepad API.
 
-Only one problem occured, when my headphones (which also have buttons) registered themself also as gamepad. But thats easy: only a check for mapping == "standard" was needed to ignore headphones.
+Only one problem occured, when my headphone (which also has buttons) registered itself also as gamepad. But thats easy: only a check for mapping == "standard" was needed to ignore headphones.
 
 ### Recognizing that its "Prior art" on YouTube...
 During research, for some angle-depending problems with the creature (it folded into itself and looked akward) i stumbled upon the very same methoid of procedural generation of fish-like creatures. So, i invented nothing at all... (not that i thought that, but i was very proud of myself at this point)
