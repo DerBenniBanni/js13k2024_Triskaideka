@@ -56,15 +56,26 @@ So i added a simple Asteroids-like spaceship (triangle) as player character and 
 
 ## Music. Soundbox to the rescue!
 
-At this stage (player shooting at snake) there was one thing missing: music and SFX
+At this stage (player shooting at snake) there was one thing missing: music and SFX.
+For the music i first thought about adding some very heavy metal (like in Doom) to emphasise the action. But i was unable to get the instruments in Soundbox to a descent "power-level" and also my beats didnt sound very "metal". So i thought of the good old 80th and their gorgeous action tv-shows and finally settled upon Airwolf (the advanced prototype supersonic helicopter with stealth capabilities and a formidable arsenal).
+
+Here is <a href="https://sb.bitsnbites.eu/?data=U0JveA4C7duxalNRGAfw_73BglA3RboIQiWDj-Cgg2OHdHRzqKO0SjU0VAyIGmJKsA0VCfoCPoV08gl8FFdvjW0DemNcisHfD853zvnuHc4H904f5-tK0sjqhXKjmwy6KZLcuZEUrTLlvfWsXV2qNkVZPny83d5t72y3q7lunQW09aTded7ZbXequW4dAAAAAAAAAOY21YC-_eDyrw3oxsukPxi-TUYHZ3GYg0GVT3rpv86L8zzwpWS5Pk6sJdfr40Qv2Rvuj5J3h2dxP4fDKp-8yV4_r_6Ruk5Lm1HXaWm_rWs8fj_60wE-fsj4HOtannqnrq4d_ycAAAAAAAAslKkG9JWbJzegL66n1zq5AT2HRSx8aw4-DwAAAAAAAIC_sNFNvlRjJWk2q_3RUsprrXw7flZUNrP5KJkdAQAAAAAAACDpTsazFLd-ZorPn3K32bhfHjegq_3TH9nZEQAAAAAAAID_3Hc" target="_blank">the final song on sb.bitsnbites.eu</a> (418 bytes compressed)
 
 ### SFX
+As I now already had the music-player from soundbox in my code, i also added the SFX as "songs" made in Soundbox. By tweaking the instrument-settings and creating songs with one or a couple of notes i created explosions, hit-sounds and laser-fire with a very low additional impact on the size of the game.
+
+Example: <a href="https://sb.bitsnbites.eu/?data=U0JveA4C6xRlAAIWRqaUyZzMJ7sZJBUZmG0sgEKHWRiYnQSCvjAweDIy9jGMglEwCmgFAA" target="_blank">Laser</a> with 138 bytes (compressed)
 
 ## Add other enemies
-Components for huge variation
+To make the game more interesting i added another type of enemies: simple fighter-ships. To make a bigger variety of ships with the tiniest amount of code, i decided to build a generator based on components.
+
+5 different wing-types, 3 different canopy-types and 3 different cockpit-types are resulting in 45 different ships, that share a common design.
+![](img/enemy_components.png)
+
+All components consist of a couple of points connected by lines and are mirrored to the other side.
 
 ### Prerendering for performance
-
+I did not want to draw all those lines of all enemies (which can get pretty much) for every frame, so i created a function/object that contains an offscreen-canvas, where the enemy could be rendered once. That Canvas the is used as source for the drawImage-command during rendering of the game. See <a href="../src/spritebuffer.js" target="_blank">src/spritebuffer.js</a> and <a href="../src/enemy.js#L84" target="_blank">src/enemy.js#L84</a> for the simple code and usage.
 
 ## Add bigger enemies
 
