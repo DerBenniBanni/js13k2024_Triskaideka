@@ -37,6 +37,11 @@ Then i added a hull for the creature by calculation the 90° positions left and 
 
 ![outlined snake](img/snake_02.png)
 
+As final touch the helper-circles are cleared (using canvas-2d-context.globalCompositeOperation = "destination-out") before the hull is drwan. So the snake does not look hollow when overlapping other creatures. 
+
+And to make the creatures more interesting i added spikes to them. They are created by adding some points at different angels and with a greater distance to the segments (symbolised by the dotted line in the image)
+
+![outlined snake](img/snake_03.png)
 
 ### Gamepad
 
@@ -78,8 +83,24 @@ All components consist of a couple of points connected by lines and are mirrored
 I did not want to draw all those lines of all enemies (which can get pretty much) for every frame, so i created a function/object that contains an offscreen-canvas, where the enemy could be rendered once. That Canvas the is used as source for the drawImage-command during rendering of the game. See <a href="../src/spritebuffer.js" target="_blank">src/spritebuffer.js</a> and <a href="../src/enemy.js#L84" target="_blank">src/enemy.js#L84</a> for the simple code and usage.
 
 ## Add bigger enemies
+Now i decided to add some bigger enemies: Squids!
+
+They are constucted of one circular body and have 3 of the snakes attached as tentacle child-objects. The position of the children is alway updated to their relative positions, when the head of the squid moves. The tentacles only movement is a slight angular rotation of the head, resulting ins pendulum-like motion.
+
+The Squids are rendered using following steps:
+- draw a filled circle for the head
+- render the tentacle-snakes (they are not filled, but the helper-circles are cleared (using canvas-2d-context.globalCompositeOperation = "destination-out") before the hull is drawn.
+- clear a slightly smaller head-circle, again with "destination-out"
+- draw the eyes
+
+![](img/squids_rendering.png)
 
 ## Add another even bigger enemytype
+The next bigger enemy was just a small step: The Starfish
+
+Instead of fixed relative positions for the tentacles, they are now rotated around the head. 3 clockwise, the other 3counter-clockwise.
+
+![](img/starfish.png)
 
 ## Reaching the 13k Limit - Roadroller to the rescue!
 
